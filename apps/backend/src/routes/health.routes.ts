@@ -1,11 +1,14 @@
 import { Router } from "express";
+import { prisma } from "../lib/prisma.js";
 
 const router = Router();
 
-router.get("/", (_req, res) => {
-  res.status(200).json({
+router.get("/", async (_req, res) => {
+  await prisma.$queryRaw`SELECT 1`;
+
+  res.json({
     success: true,
-    message: "InterviewKitchen API is running 🚀",
+    database: "connected",
   });
 });
 
