@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17
+
+    container_name: interview-kitchen-postgres
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: interview_kitchen
+      POSTGRES_PASSWORD: interview_kitchen_password
+      POSTGRES_DB: interview_kitchen_db
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
