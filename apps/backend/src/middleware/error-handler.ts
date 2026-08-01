@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import AppError from "../utils/AppError.js";
+import AppError from "../shared/errors/AppError.js";
 import logger from "../lib/logger.js";
 
 export default function errorHandler(

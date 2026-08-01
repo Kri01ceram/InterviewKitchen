@@ -1,6 +1,6 @@
 import { prisma } from "../lib/prisma.js";
 
-export class UserRepository {
+export class AuthRepository {
   async findByEmail(email: string) {
     return prisma.user.findUnique({
       where: { email },
@@ -24,4 +24,4 @@ export class UserRepository {
   }
 }
 
-export const userRepository = new UserRepository();
+export const authRepository = new AuthRepository();
