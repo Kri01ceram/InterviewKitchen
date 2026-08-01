@@ -1,23 +1,20 @@
 import { prisma } from "../lib/prisma.js";
+import type { CreateUserDto } from "./dto/create-user.dto.js";
 
 export class AuthRepository {
-  async findByEmail(email: string) {
+  async findUserByEmail(email: string) {
     return prisma.user.findUnique({
       where: { email },
     });
   }
 
-  async findById(id: string) {
+  async findUserById(id: string) {
     return prisma.user.findUnique({
       where: { id },
     });
   }
 
-  async create(data: {
-    name: string;
-    email: string;
-    password: string;
-  }) {
+  async createUser(data: CreateUserDto) {
     return prisma.user.create({
       data,
     });
