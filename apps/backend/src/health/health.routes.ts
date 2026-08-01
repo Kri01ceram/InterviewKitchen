@@ -1,15 +1,9 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
+import healthController from "./health.controller.js";
 
 const router = Router();
 
-router.get("/", async (_req, res) => {
-  await prisma.$queryRaw`SELECT 1`;
-
-  res.json({
-    success: true,
-    database: "connected",
-  });
-});
+router.get("/", healthController.getHealth);
 
 export default router;
