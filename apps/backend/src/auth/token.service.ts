@@ -2,6 +2,7 @@ import { JWTPayload, SignJWT, jwtVerify } from "jose";
 import type { JwtPayload } from "./auth.types.js";
 import AppError from "../shared/errors/AppError.js";
 import { env } from "../config/env.js";
+import { AUTH_CONSTANTS } from "../shared/constants/auth.js";
 
 class TokenService {
     private getSecret(secret: string | undefined, name: string): Uint8Array {
@@ -43,7 +44,7 @@ private readonly refreshSecret = this.getSecret(
         alg: "HS256",
       })
       .setIssuedAt()
-      .setExpirationTime("15m")
+      .setExpirationTime(AUTH_CONSTANTS.ACCESS_TOKEN_EXPIRY)
       .sign(this.accessSecret);
   }
 
@@ -53,7 +54,7 @@ private readonly refreshSecret = this.getSecret(
         alg: "HS256",
       })
       .setIssuedAt()
-      .setExpirationTime("7d")
+      .setExpirationTime(AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRY)
       .sign(this.refreshSecret);
   }
 
