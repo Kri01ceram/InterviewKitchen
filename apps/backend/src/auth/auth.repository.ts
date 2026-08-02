@@ -19,6 +19,18 @@ export class AuthRepository {
       data,
     });
   }
+
+  async saveRefreshToken(data: {
+    userId: string;
+    hashedToken: string;
+    expiresAt: Date;
+    createdByIp?: string;
+    userAgent?: string;
+  }) {
+    return prisma.refreshToken.create({
+      data,
+    });
+  }
 }
 
 export const authRepository = new AuthRepository();
