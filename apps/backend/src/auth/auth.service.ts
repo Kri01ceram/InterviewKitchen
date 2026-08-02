@@ -25,40 +25,20 @@ export class AuthService implements IAuthService {
 
   if (existingUser) {
     throw new AppError(
-  "User with this email already exists.",
-  HTTP_STATUS.CONFLICT
-);
+      "User with this email already exists.",
+      HTTP_STATUS.CONFLICT
+    );
   }
+
   const passwordHash =
-  await this.password.hashPassword(data.password);
+    await this.password.hashPassword(data.password);
+
   const user =
-  await this.repository.createUser({
-    name: data.name,
-    email: data.email,
-    passwordHash,
-});
-const payload = {
-    userId: user.id,
-    email: user.email,
-    role: user.role,
-};
-
-const accessToken =
-    await this.token.generateAccessToken(payload);
-
-const refreshToken =
-    await this.token.generateRefreshToken(payload);
-    const hashedRefreshToken =
-    await this.password.hashPassword(refreshToken);
-
-await this.repository.saveRefreshToken({
-    userId: user.id,
-    hashedToken: hashedRefreshToken,
-    expiresAt: new Date(
-        Date.now() +
-        AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRY
-    ),
-});
+    await this.repository.createUser({
+      name: data.name,
+      email: data.email,
+      passwordHash,
+  });
 
   return {
     user: {
@@ -67,8 +47,6 @@ await this.repository.saveRefreshToken({
       email: user.email,
       role: user.role,
     },
-    accessToken,
-    refreshToken,
   };
 }
 }

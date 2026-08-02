@@ -5,7 +5,4 @@ export interface RegisterResponseDto {
     email: string;
     role: "USER" | "ADMIN";
   };
-
-  accessToken: string;
-  refreshToken: string;
 }
