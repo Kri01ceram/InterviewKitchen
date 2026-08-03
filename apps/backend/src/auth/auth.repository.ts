@@ -19,18 +19,40 @@ export class AuthRepository {
       data,
     });
   }
+  async updateLastLogin(userId: string) {
+  return prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      lastLoginAt: new Date(),
+    },
+  });
+}
 
-  async saveRefreshToken(data: {
-    userId: string;
-    hashedToken: string;
-    expiresAt: Date;
-    createdByIp?: string;
-    userAgent?: string;
-  }) {
-    return prisma.refreshToken.create({
-      data,
-    });
-  }
+async createRefreshToken(data: {
+  userId: string;
+  hashedToken: string;
+  expiresAt: Date;
+  createdByIp?: string;
+  userAgent?: string;
+}) {
+  return prisma.refreshToken.create({
+    data,
+  });
+}
+
+  // async saveRefreshToken(data: {
+  //   userId: string;
+  //   hashedToken: string;
+  //   expiresAt: Date;
+  //   createdByIp?: string;
+  //   userAgent?: string;
+  // }) {
+  //   return prisma.refreshToken.create({
+  //     data,
+  //   });
+  // }
 }
 
 export const authRepository = new AuthRepository();
