@@ -18,6 +18,16 @@ class AuthController {
       );
     }
   );
+  login = asyncHandler(async (req: Request, res: Response) => {
+  const data = await authService.login(req.body);
+
+  return successResponse(
+    res,
+    "Login successful.",
+    data,
+    HTTP_STATUS.OK
+  );
+});
 }
 
 export const authController = new AuthController();

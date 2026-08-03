@@ -3,6 +3,8 @@ export const AUTH_CONSTANTS = {
 
   REFRESH_TOKEN_EXPIRY: "7d",
 
+  REFRESH_TOKEN_EXPIRY_MS: 7 * 24 * 60 * 60 * 1000,
+
   BCRYPT_SALT_ROUNDS: 12,
 
   COOKIE_NAME: "refreshToken",

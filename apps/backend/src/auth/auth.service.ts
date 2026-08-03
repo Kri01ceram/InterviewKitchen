@@ -89,8 +89,28 @@ const accessToken =
 
 const refreshToken =
   await this.token.generateRefreshToken(payload);
+const hashedRefreshToken =
+  await this.password.hashPassword(refreshToken);
 
-throw new Error("Not implemented.");
+await this.repository.createSession({
+  userId: user.id,
+  hashedToken: hashedRefreshToken,
+  expiresAt: new Date(
+  Date.now() + AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRY_MS
+),
+});
+
+return {
+  user: {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  },
+  accessToken,
+  refreshToken,
+};
+
 }
 }
 
