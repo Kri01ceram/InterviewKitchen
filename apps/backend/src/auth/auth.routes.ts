@@ -11,9 +11,15 @@
 import { Router } from "express";
 
 import { authController } from "./auto.controller.js";
+import { registerSchema } from "./auth.validator.js";
+import { validate } from "../shared/middleware/validate.js";
 
 const router = Router();
 
-router.post("/register", authController.register);
+router.post(
+  "/register",
+  validate(registerSchema),
+  authController.register
+);
 
 export default router;

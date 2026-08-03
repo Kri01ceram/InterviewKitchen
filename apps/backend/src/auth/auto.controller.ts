@@ -1,30 +1,23 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response } from "express";
 
 import { authService } from "./auth.service.js";
 import { successResponse } from "../shared/responses/api-response.js";
-import type { RegisterDto } from "./dto/register.dto.js";
+import  asyncHandler  from "../shared/utils/async-handler.js";
+import { HTTP_STATUS } from "../shared/constants/http.js";
 
 class AuthController {
-  async register(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const data = await authService.register(
-        req.body as RegisterDto
-      );
+  register = asyncHandler(
+    async (req: Request, res: Response) => {
+      const data = await authService.register(req.body);
 
       return successResponse(
         res,
         "User registered successfully.",
         data,
-        201
+        HTTP_STATUS.CREATED
       );
-    } catch (error) {
-      next(error);
     }
-  }
+  );
 }
 
 export const authController = new AuthController();
