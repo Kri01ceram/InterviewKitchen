@@ -1,5 +1,6 @@
 import { prisma } from "../lib/prisma.js";
 import type { CreateUserDto } from "./dto/create-user.dto.js";
+import { passwordService } from "./password.service.js";
 
 export class AuthRepository {
   async findUserByEmail(email: string) {
@@ -55,6 +56,33 @@ async updateRefreshToken(
       expiresAt,
     },
   });
+}
+async revokeRefreshToken(hashedToken: string) {
+  const sessions = await prisma.refreshToken.findMany({
+    where: {
+      revoked: false,
+    },
+  });
+
+  for (const session of sessions) {
+    const matches = await passwordService.verifyPassword(
+      hashedToken,
+      session.hashedToken
+    );
+
+    if (matches) {
+      return prisma.refreshToken.update({
+        where: {
+          id: session.id,
+        },
+        data: {
+          revoked: true,
+        },
+      });
+    }
+  }
+
+  return null;
 }
 async createRefreshToken(data: {
   userId: string;
