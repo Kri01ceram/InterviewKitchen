@@ -112,6 +112,11 @@ return {
 };
 
 }
+async refresh(
+  refreshToken: string
+): Promise<AuthResponseDto> {
+  throw new Error("Not implemented.");
+}
 }
 
 export const authService = new AuthService();

@@ -29,6 +29,45 @@ export class AuthRepository {
     },
   });
 }
+async findRefreshToken(hashedToken: string) {
+  return prisma.refreshToken.findUnique({
+    where: {
+      hashedToken,
+    },
+    include: {
+      user: true,
+    },
+  });
+}
+async rotateSession(data: {
+  oldHashedToken: string;
+  newHashedToken: string;
+  expiresAt: Date;
+}) {
+  return prisma.$transaction(async (tx) => {
+    const session = await tx.refreshToken.findUnique({
+      where: {
+        hashedToken: data.oldHashedToken,
+      },
+    });
+
+    if (!session) {
+      return null;
+    }
+
+    await tx.refreshToken.update({
+      where: {
+        id: session.id,
+      },
+      data: {
+        hashedToken: data.newHashedToken,
+        expiresAt: data.expiresAt,
+      },
+    });
+
+    return session;
+  });
+}
 
 async createRefreshToken(data: {
   userId: string;
