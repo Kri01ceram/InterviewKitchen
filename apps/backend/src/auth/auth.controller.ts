@@ -5,7 +5,6 @@ import { successResponse } from "../shared/responses/api-response.js";
 import  asyncHandler  from "../shared/utils/async-handler.js";
 import { HTTP_STATUS } from "../shared/constants/http.js";
 import { AUTH_CONSTANTS } from "../shared/constants/auth.js";
-import { env } from "../config/env.js";
 import { REFRESH_COOKIE_OPTIONS } from "../shared/constants/cookie.js";
 
 class AuthController {
