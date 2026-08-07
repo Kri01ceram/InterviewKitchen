@@ -1,5 +1,5 @@
 import { JWTPayload, SignJWT, jwtVerify } from "jose";
-import type { JwtPayload } from "./auth.types.js";
+import type { AccessTokenPayload, RefreshTokenPayload } from "./auth.types.js";
 import AppError from "../shared/errors/AppError.js";
 import { env } from "../config/env.js";
 import { AUTH_CONSTANTS } from "../shared/constants/auth.js";
@@ -22,23 +22,49 @@ private readonly refreshSecret = this.getSecret(
   "JWT_REFRESH_SECRET"
 );
 
-  private validatePayload(payload: JWTPayload): JwtPayload {
-    if (
-      typeof payload.userId !== "string" ||
-      typeof payload.email !== "string" ||
-      (payload.role !== "USER" && payload.role !== "ADMIN")
-    ) {
-      throw new AppError("Invalid JWT payload.", 401);
-    }
-
-    return {
-      userId: payload.userId,
-      email: payload.email,
-      role: payload.role,
-    };
+  private validateAccessPayload(
+  payload: JWTPayload
+): AccessTokenPayload {
+  if (
+    typeof payload.userId !== "string" ||
+    typeof payload.email !== "string" ||
+    (payload.role !== "USER" &&
+      payload.role !== "ADMIN")
+  ) {
+    throw new AppError("Invalid JWT payload.", 401);
   }
 
-  async generateAccessToken(payload: JwtPayload): Promise<string> {
+  return {
+    userId: payload.userId,
+    email: payload.email,
+    role: payload.role,
+  };
+}
+private validateRefreshPayload(
+  payload: JWTPayload
+): RefreshTokenPayload {
+  if (
+    typeof payload.userId !== "string" ||
+    typeof payload.email !== "string" ||
+    (payload.role !== "USER" &&
+      payload.role !== "ADMIN") ||
+    typeof payload.sid !== "string"
+  ) {
+    throw new AppError(
+      "Invalid refresh token payload.",
+      401
+    );
+  }
+
+  return {
+    userId: payload.userId,
+    email: payload.email,
+    role: payload.role,
+    sid: payload.sid,
+  };
+}
+
+  async generateAccessToken(payload: AccessTokenPayload): Promise<string> {
     return new SignJWT(payload)
       .setProtectedHeader({
         alg: "HS256",
@@ -48,7 +74,9 @@ private readonly refreshSecret = this.getSecret(
       .sign(this.accessSecret);
   }
 
-  async generateRefreshToken(payload: JwtPayload): Promise<string> {
+  async generateRefreshToken(
+    payload: RefreshTokenPayload
+): Promise<string> {
     return new SignJWT(payload)
       .setProtectedHeader({
         alg: "HS256",
@@ -58,17 +86,29 @@ private readonly refreshSecret = this.getSecret(
       .sign(this.refreshSecret);
   }
 
-  async verifyAccessToken(token: string): Promise<JwtPayload> {
-    const { payload } = await jwtVerify(token, this.accessSecret);
+async verifyAccessToken(
+  token: string
+): Promise<AccessTokenPayload> {
 
-    return this.validatePayload(payload);
-  }
+  const { payload } = await jwtVerify(
+    token,
+    this.accessSecret
+  );
 
-  async verifyRefreshToken(token: string): Promise<JwtPayload> {
-    const { payload } = await jwtVerify(token, this.refreshSecret);
+  return this.validateAccessPayload(payload);
+}
 
-    return this.validatePayload(payload);
-  }
+  async verifyRefreshToken(
+  token: string
+): Promise<RefreshTokenPayload> {
+
+  const { payload } = await jwtVerify(
+    token,
+    this.refreshSecret
+  );
+
+  return this.validateRefreshPayload(payload);
+}
 }
 
 export const tokenService = new TokenService();

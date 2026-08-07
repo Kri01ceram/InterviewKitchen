@@ -37,20 +37,30 @@ async findUserSessions(userId: string) {
     },
   });
 }
-async updateRefreshToken(
-  sessionId: string,
-  hashedToken: string,
-  expiresAt: Date
-) {
-  return prisma.refreshToken.update({
+async findSession(sessionId: string) {
+  return prisma.refreshToken.findUnique({
     where: {
       id: sessionId,
     },
-    data: {
-      hashedToken,
-      expiresAt,
+    include: {
+      user: true,
     },
   });
+}
+async rotateSession(
+    sessionId: string,
+    hashedToken: string,
+    expiresAt: Date
+) {
+    return prisma.refreshToken.update({
+        where: {
+            id: sessionId,
+        },
+        data: {
+            hashedToken,
+            expiresAt,
+        },
+    });
 }
 async createRefreshToken(data: {
   userId: string;
