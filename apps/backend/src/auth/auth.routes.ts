@@ -10,7 +10,7 @@
 // router.post("/logout", controller.logout);
 import { Router } from "express";
 
-import { authController } from "./auto.controller.js";
+import { authController } from "./auth.controller.js";
 import { loginSchema, registerSchema } from "./auth.validator.js";
 import { validate } from "../shared/middleware/validate.js";
 

@@ -7,12 +7,17 @@ import notFound from "./middleware/not-found.js";
 import errorHandler from "./middleware/error-handler.js";
 import { API_BASE } from "./config/constants.js";
 import routes from "./routes/index.js";
+import cookieParser from "cookie-parser";
+import { AUTH_CONSTANTS } from "./shared/constants/auth.js";
+import { env } from "./config/env.js";
+import { HTTP_STATUS } from "./shared/constants/http.js";
 
 const app = express();
 
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   pinoHttp({
     logger,
@@ -23,5 +28,6 @@ app.use(
 app.use(API_BASE, routes);
 app.use(notFound);
 app.use(errorHandler);
+
 
 export default app;
