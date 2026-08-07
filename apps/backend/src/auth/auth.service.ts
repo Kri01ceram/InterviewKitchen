@@ -115,7 +115,33 @@ return {
 async refresh(
   refreshToken: string
 ): Promise<AuthResponseDto> {
-  throw new Error("Not implemented.");
+  const payload = await this.token.verifyRefreshToken(refreshToken);
+const sessions = await this.repository.findUserSessions(
+  payload.userId
+);
+
+let matchedSession: (typeof sessions)[number] | null = null;
+
+for (const session of sessions) {
+  const matches = await this.password.verifyPassword(
+    refreshToken,
+    session.hashedToken
+  );
+
+  if (matches) {
+    matchedSession = session;
+    break;
+  }
+}
+
+if (!matchedSession) {
+  throw new AppError(
+    "Invalid refresh token.",
+    HTTP_STATUS.UNAUTHORIZED
+  );
+}
+
+throw new Error("Not implemented.");
 }
 }
 
