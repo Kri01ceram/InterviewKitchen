@@ -29,46 +29,29 @@ export class AuthRepository {
     },
   });
 }
-async findRefreshToken(hashedToken: string) {
-  return prisma.refreshToken.findUnique({
+async findUserSessions(userId: string) {
+  return prisma.refreshToken.findMany({
     where: {
+      userId,
+      revoked: false,
+    },
+  });
+}
+async updateRefreshToken(
+  sessionId: string,
+  hashedToken: string,
+  expiresAt: Date
+) {
+  return prisma.refreshToken.update({
+    where: {
+      id: sessionId,
+    },
+    data: {
       hashedToken,
-    },
-    include: {
-      user: true,
+      expiresAt,
     },
   });
 }
-async rotateSession(data: {
-  oldHashedToken: string;
-  newHashedToken: string;
-  expiresAt: Date;
-}) {
-  return prisma.$transaction(async (tx) => {
-    const session = await tx.refreshToken.findUnique({
-      where: {
-        hashedToken: data.oldHashedToken,
-      },
-    });
-
-    if (!session) {
-      return null;
-    }
-
-    await tx.refreshToken.update({
-      where: {
-        id: session.id,
-      },
-      data: {
-        hashedToken: data.newHashedToken,
-        expiresAt: data.expiresAt,
-      },
-    });
-
-    return session;
-  });
-}
-
 async createRefreshToken(data: {
   userId: string;
   hashedToken: string;

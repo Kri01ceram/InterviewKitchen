@@ -39,22 +39,14 @@ model User {
 
 model RefreshToken {
   id            String   @id @default(cuid())
-
-  hashedToken   String   @unique
-
+  hashedToken   String
   expiresAt     DateTime
-
   createdAt     DateTime @default(now())
-
   revoked       Boolean  @default(false)
 
-  createdByIp   String?
-
-  userAgent     String?
-
   userId        String
-
   user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+  createdByIp   String?
+  userAgent     String?
 }
