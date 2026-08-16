@@ -6,6 +6,10 @@ import asyncHandler from "../shared/utils/async-handler.js";
 import { HTTP_STATUS } from "../shared/constants/http.js";
 import { AUTH_CONSTANTS } from "../shared/constants/auth.js";
 import { REFRESH_COOKIE_OPTIONS } from "../shared/constants/cookie.js";
+import {
+  AuthenticatedRequest,
+  protect,
+} from "./auth.middleware.js";
 
 class AuthController {
   register = asyncHandler(
