@@ -40,4 +40,17 @@ router.get(
   protect,
   authController.me
 );
+router.get(
+  "/admin-test",
+  protect,
+  authorize("ADMIN"),
+  (req, res) => {
+    return successResponse(
+      res,
+      "Admin authorization successful.",
+      null,
+      HTTP_STATUS.OK
+    );
+  }
+);
 export default router;
