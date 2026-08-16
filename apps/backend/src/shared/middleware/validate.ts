@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import type { ZodType } from "zod";
+import { errors as joseErrors } from "jose";
 
 import AppError from "../errors/AppError.js";
 import { HTTP_STATUS } from "../constants/http.js";
