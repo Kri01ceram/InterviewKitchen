@@ -7,5 +7,6 @@ export interface IAuthService {
 
   login(data: LoginDto): Promise<AuthResponseDto>;
   refresh(refreshToken: string): Promise<AuthResponseDto>;
+  logout(refreshToken: string): Promise<void>;
   
 }

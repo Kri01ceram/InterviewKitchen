@@ -1,6 +1,5 @@
 import { prisma } from "../lib/prisma.js";
 import type { CreateUserDto } from "./dto/create-user.dto.js";
-import { passwordService } from "./password.service.js";
 
 export class AuthRepository {
   async findUserByEmail(email: string) {
@@ -20,121 +19,77 @@ export class AuthRepository {
       data,
     });
   }
-  async updateLastLogin(userId: string) {
-  return prisma.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
-      lastLoginAt: new Date(),
-    },
-  });
-}
-async findUserSessions(userId: string) {
-  return prisma.refreshToken.findMany({
-    where: {
-      userId,
-      revoked: false,
-      expiresAt: {
-        gt: new Date(),
-      },
-    },
-  });
-}
 
-async updateRefreshToken(
-  sessionId: string,
-  hashedToken: string,
-  expiresAt: Date
-) {
-  return prisma.refreshToken.update({
-    where: {
-      id: sessionId,
-    },
-    data: {
-      hashedToken,
-      expiresAt,
-    },
-  });
-}
-async revokeRefreshToken(hashedToken: string) {
-  const sessions = await prisma.refreshToken.findMany({
-    where: {
-      revoked: false,
-    },
-  });
-
-  for (const session of sessions) {
-    const matches = await passwordService.verifyPassword(
-      hashedToken,
-      session.hashedToken
-    );
-
-    if (matches) {
-      return prisma.refreshToken.update({
-        where: {
-          id: session.id,
-        },
+  async createSession(data: {
+    userId: string;
+    hashedToken: string;
+    expiresAt: Date;
+    createdByIp?: string;
+    userAgent?: string;
+  }) {
+    return prisma.$transaction(async (tx) => {
+      await tx.refreshToken.create({
         data: {
-          revoked: true,
+          userId: data.userId,
+          hashedToken: data.hashedToken,
+          expiresAt: data.expiresAt,
+          createdByIp: data.createdByIp,
+          userAgent: data.userAgent,
         },
       });
-    }
+
+      await tx.user.update({
+        where: {
+          id: data.userId,
+        },
+        data: {
+          lastLoginAt: new Date(),
+        },
+      });
+    });
   }
 
-  return null;
-}
-async createRefreshToken(data: {
-  userId: string;
-  hashedToken: string;
-  expiresAt: Date;
-  createdByIp?: string;
-  userAgent?: string;
-}) {
-  return prisma.refreshToken.create({
-    data,
-  });
-}
-async createSession(data: {
-  userId: string;
-  hashedToken: string;
-  expiresAt: Date;
-  createdByIp?: string;
-  userAgent?: string;
-}) {
-  return prisma.$transaction(async (tx) => {
-    await tx.refreshToken.create({
-      data: {
-        userId: data.userId,
-        hashedToken: data.hashedToken,
-        expiresAt: data.expiresAt,
-        createdByIp: data.createdByIp,
-        userAgent: data.userAgent,
-      },
-    });
-
-    await tx.user.update({
+  async findUserSessions(userId: string) {
+    return prisma.refreshToken.findMany({
       where: {
-        id: data.userId,
+        userId,
+        revoked: false,
+        expiresAt: {
+          gt: new Date(),
+        },
       },
-      data: {
-        lastLoginAt: new Date(),
+      include: {
+        user: true,
       },
     });
-  });
-}
+  }
 
-  // async saveRefreshToken(data: {
-  //   userId: string;
-  //   hashedToken: string;
-  //   expiresAt: Date;
-  //   createdByIp?: string;
-  //   userAgent?: string;
-  // }) {
-  //   return prisma.refreshToken.create({
-  //     data,
-  //   });
-  // }
+  async updateRefreshToken(
+    sessionId: string,
+    hashedToken: string,
+    expiresAt: Date
+  ) {
+    return prisma.refreshToken.update({
+      where: {
+        id: sessionId,
+      },
+      data: {
+        hashedToken,
+        expiresAt,
+      },
+    });
+  }
+
+  async revokeRefreshToken(sessionId: string) {
+    return prisma.refreshToken.update({
+      where: {
+        id: sessionId,
+      },
+      data: {
+        revoked: true,
+      },
+    });
+  }
 }
 
 export const authRepository = new AuthRepository();

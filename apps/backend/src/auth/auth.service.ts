@@ -143,6 +143,25 @@ if (!matchedSession) {
 
 throw new Error("Not implemented.");
 }
+async logout(refreshToken: string): Promise<void> {
+  const payload = await this.token.verifyRefreshToken(refreshToken);
+
+  const sessions = await this.repository.findUserSessions(
+    payload.userId
+  );
+
+  for (const session of sessions) {
+    const matches = await this.password.verifyPassword(
+      refreshToken,
+      session.hashedToken
+    );
+
+    if (matches) {
+      await this.repository.revokeRefreshToken(session.id);
+      return;
+    }
+  }
+}
 }
 
 export const authService = new AuthService();

@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 
 import { authService } from "./auth.service.js";
 import { successResponse } from "../shared/responses/api-response.js";
-import  asyncHandler  from "../shared/utils/async-handler.js";
+import asyncHandler from "../shared/utils/async-handler.js";
 import { HTTP_STATUS } from "../shared/constants/http.js";
 import { AUTH_CONSTANTS } from "../shared/constants/auth.js";
 import { REFRESH_COOKIE_OPTIONS } from "../shared/constants/cookie.js";
@@ -20,25 +20,49 @@ class AuthController {
       );
     }
   );
-  login = asyncHandler(async (req: Request, res: Response) => {
-  const data = await authService.login(req.body);
 
-  res.cookie(
-  AUTH_CONSTANTS.COOKIE_NAME,
-  data.refreshToken,
-  REFRESH_COOKIE_OPTIONS
-);
+  login = asyncHandler(
+    async (req: Request, res: Response) => {
+      const data = await authService.login(req.body);
 
-  return successResponse(
-    res,
-    "Login successful.",
-    {
-      user: data.user,
-      accessToken: data.accessToken,
-    },
-    HTTP_STATUS.OK
+      res.cookie(
+        AUTH_CONSTANTS.COOKIE_NAME,
+        data.refreshToken,
+        REFRESH_COOKIE_OPTIONS
+      );
+
+      return successResponse(
+        res,
+        "Login successful.",
+        {
+          user: data.user,
+          accessToken: data.accessToken,
+        },
+        HTTP_STATUS.OK
+      );
+    }
   );
-});
+
+  logout = asyncHandler(
+    async (req: Request, res: Response) => {
+      const refreshToken =
+        req.cookies?.[AUTH_CONSTANTS.COOKIE_NAME];
+
+      if (refreshToken) {
+        await authService.logout(refreshToken);
+      }
+
+      res.clearCookie(
+        AUTH_CONSTANTS.COOKIE_NAME,
+        REFRESH_COOKIE_OPTIONS
+      );
+
+      return successResponse(
+        res,
+        "Logged out successfully."
+      );
+    }
+  );
 }
 
 export const authController = new AuthController();
