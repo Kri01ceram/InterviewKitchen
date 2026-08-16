@@ -15,6 +15,8 @@ import { loginSchema, registerSchema } from "./auth.validator.js";
 import { validate } from "../shared/middleware/validate.js";
 import { protect } from "./auth.middleware.js";
 import { authorize } from "./authorize.middleware.js";
+import { HTTP_STATUS } from "../shared/constants/http.js";
+import { successResponse } from "../shared/responses/api-response.js";
 
 const router = Router();
 
