@@ -13,6 +13,7 @@ import { Router } from "express";
 import { authController } from "./auth.controller.js";
 import { loginSchema, registerSchema } from "./auth.validator.js";
 import { validate } from "../shared/middleware/validate.js";
+import { protect } from "./auth.middleware.js";
 
 const router = Router();
 
@@ -31,5 +32,9 @@ router.post(
   "/logout",
   authController.logout
 );
-
+router.get(
+  "/me",
+  protect,
+  authController.me
+);
 export default router;
