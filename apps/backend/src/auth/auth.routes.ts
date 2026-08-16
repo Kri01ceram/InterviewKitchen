@@ -14,6 +14,7 @@ import { authController } from "./auth.controller.js";
 import { loginSchema, registerSchema } from "./auth.validator.js";
 import { validate } from "../shared/middleware/validate.js";
 import { protect } from "./auth.middleware.js";
+import { authorize } from "./authorize.middleware.js";
 
 const router = Router();
 
