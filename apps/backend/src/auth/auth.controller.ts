@@ -67,6 +67,20 @@ class AuthController {
       );
     }
   );
+  me = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = (req as AuthenticatedRequest).user;
+
+    return successResponse(
+      res,
+      "User retrieved successfully.",
+      {
+        user,
+      },
+      HTTP_STATUS.OK
+    );
+  }
+);
 }
 
 export const authController = new AuthController();
