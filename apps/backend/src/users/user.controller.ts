@@ -23,6 +23,24 @@ class UserController {
       );
     }
   );
+  updateProfile = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId =
+      (req as AuthenticatedRequest).user.userId;
+
+    const user = await userService.updateProfile(
+      userId,
+      req.body.name
+    );
+
+    return successResponse(
+      res,
+      "Profile updated successfully.",
+      { user },
+      HTTP_STATUS.OK
+    );
+  }
+);
 }
 
 export const userController = new UserController();
