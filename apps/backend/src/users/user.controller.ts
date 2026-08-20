@@ -41,6 +41,25 @@ class UserController {
     );
   }
 );
+changePassword = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId =
+      (req as AuthenticatedRequest).user.userId;
+
+    await userService.changePassword(
+      userId,
+      req.body.currentPassword,
+      req.body.newPassword
+    );
+
+    return successResponse(
+      res,
+      "Password changed successfully.",
+      undefined,
+      HTTP_STATUS.OK
+    );
+  }
+);
 }
 
 export const userController = new UserController();
