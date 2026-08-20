@@ -39,6 +39,27 @@ async updateName(id: string, name: string) {
     },
   });
 }
+async updatePassword(id: string, passwordHash: string) {
+  return prisma.user.update({
+    where: {
+      id,
+    },
+    data: {
+      passwordHash,
+    },
+  });
+}
+async findByIdWithPassword(id: string) {
+  return prisma.user.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      passwordHash: true,
+    },
+  });
+}
 }
 
 
