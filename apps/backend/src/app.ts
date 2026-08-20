@@ -11,6 +11,7 @@ import cookieParser from "cookie-parser";
 import { AUTH_CONSTANTS } from "./shared/constants/auth.js";
 import { env } from "./config/env.js";
 import { HTTP_STATUS } from "./shared/constants/http.js";
+import userRoutes from "./users/user.routes.js";
 
 const app = express();
 
@@ -28,6 +29,10 @@ app.use(
 app.use(API_BASE, routes);
 app.use(notFound);
 app.use(errorHandler);
+app.use(
+  "/api/v1/users",
+  userRoutes
+);
 
 
 export default app;
