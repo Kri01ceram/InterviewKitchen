@@ -19,6 +19,18 @@ export class UserService {
 
     return user;
   }
+  async updateProfile(userId: string, name: string) {
+  const user = await this.repository.findById(userId);
+
+  if (!user) {
+    throw new AppError(
+      "User not found.",
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  return this.repository.updateName(userId, name);
+}
 }
 
 export const userService = new UserService();
