@@ -1,6 +1,7 @@
 import { prisma } from "../lib/prisma.js";
 import type { CreateQuestionDto } from "./dto/create-question.dto.js";
-
+import type { UpdateQuestionDto } from "./dto/update-question.dto.js";
+import { Prisma } from "@prisma/client";
 export class QuestionRepository {
   async createQuestion(
     interviewId: string,
@@ -42,6 +43,41 @@ export class QuestionRepository {
       },
     });
   }
+  async updateQuestion(
+  questionId: string,
+  interviewId: string,
+  data: UpdateQuestionDto
+) {
+  return prisma.interviewQuestion.update({
+    where: {
+      id: questionId,
+    },
+    data: {
+      ...(data.question !== undefined && {
+        question: data.question,
+      }),
+
+      ...(data.type !== undefined && {
+        type: data.type,
+      }),
+
+      ...(data.options !== undefined && {
+        options:
+          data.options === null
+            ? Prisma.JsonNull
+            : data.options,
+      }),
+
+      ...(data.correctAnswer !== undefined && {
+        correctAnswer: data.correctAnswer,
+      }),
+
+      ...(data.explanation !== undefined && {
+        explanation: data.explanation,
+      }),
+    },
+  });
+}
 }
 
 export const questionRepository =

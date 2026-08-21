@@ -5,6 +5,7 @@ import asyncHandler from "../shared/utils/async-handler.js";
 import { successResponse } from "../shared/responses/api-response.js";
 import { HTTP_STATUS } from "../shared/constants/http.js";
 
+
 class QuestionController {
   create = asyncHandler(
     async (req: Request, res: Response) => {
@@ -64,6 +65,26 @@ class QuestionController {
       );
     }
   );
+  update = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user.userId;
+
+    const question =
+      await questionService.updateQuestion(
+        String(req.params.id),
+        String(req.params.interviewId),
+        userId,
+        req.body
+      );
+
+    return successResponse(
+      res,
+      "Question updated successfully.",
+      { question },
+      HTTP_STATUS.OK
+    );
+  }
+);
 }
 
 export const questionController =

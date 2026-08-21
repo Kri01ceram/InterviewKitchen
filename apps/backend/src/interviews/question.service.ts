@@ -3,6 +3,7 @@ import { questionRepository } from "./question.repository.js";
 import { interviewRepository } from "./interview.repository.js";
 import AppError from "../shared/errors/AppError.js";
 import { HTTP_STATUS } from "../shared/constants/http.js";
+import type { UpdateQuestionDto } from "./dto/update-question.dto.js";
 
 export class QuestionService {
   constructor(
@@ -90,6 +91,44 @@ export class QuestionService {
 
     return question;
   }
+  async updateQuestion(
+  questionId: string,
+  interviewId: string,
+  userId: string,
+  data: UpdateQuestionDto
+) {
+  const interview =
+    await this.interviews.findInterviewById(
+      interviewId,
+      userId
+    );
+
+  if (!interview) {
+    throw new AppError(
+      "Interview not found.",
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  const question =
+    await this.repository.findQuestionById(
+      questionId,
+      interviewId
+    );
+
+  if (!question) {
+    throw new AppError(
+      "Question not found.",
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  return this.repository.updateQuestion(
+    questionId,
+    interviewId,
+    data
+  );
+}
 }
 
 export const questionService =
