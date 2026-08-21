@@ -35,6 +35,7 @@ model User {
   updatedAt         DateTime        @updatedAt
 
   refreshTokens     RefreshToken[]
+  interviews        Interview[]
 }
 
 model RefreshToken {
@@ -49,4 +50,35 @@ model RefreshToken {
 
   createdByIp   String?
   userAgent     String?
+}
+enum InterviewType {
+  TECHNICAL
+  HR
+  MIXED
+}
+
+enum InterviewDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum InterviewStatus {
+  CREATED
+  IN_PROGRESS
+  COMPLETED
+}
+
+model Interview {
+  id          String              @id @default(cuid())
+  title       String
+  type        InterviewType
+  difficulty  InterviewDifficulty
+  status      InterviewStatus     @default(CREATED)
+
+  userId      String
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
 }
