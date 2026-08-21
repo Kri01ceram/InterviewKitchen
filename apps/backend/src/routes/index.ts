@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import healthRoutes from "../health/health.routes.js";
 import authRoutes from "../auth/auth.routes.js";
-import interviewRoutes from "../interviews/interview.routes.js";
+import interviewRoutes from "../interviews/interviews.routes.js";
 
 const router = Router();
 
