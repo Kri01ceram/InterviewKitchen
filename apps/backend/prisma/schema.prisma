@@ -82,3 +82,8 @@ model Interview {
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
 }
+enum QuestionType {
+  MCQ
+  CODING
+  SUBJECTIVE
+}
