@@ -81,9 +81,24 @@ model Interview {
 
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
+  questions InterviewQuestion[]
 }
 enum QuestionType {
   MCQ
   CODING
   SUBJECTIVE
+}
+model InterviewQuestion {
+  id            String       @id @default(cuid())
+  question      String
+  type          QuestionType
+  options       Json?
+  correctAnswer String?
+  explanation   String?
+
+  interviewId   String
+  interview     Interview    @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
