@@ -6,6 +6,8 @@ import { validate } from "../shared/middleware/validate.js";
 import { createInterviewSchema } from "./dto/create-interview.dto.js";
 import { interviewController } from "./interview.controller.js";
 
+import questionRoutes from "./question.routes.js";
+
 const router = Router();
 
 router.use(protect);
@@ -24,6 +26,10 @@ router.get(
 router.get(
   "/:id",
   interviewController.getById
+);
+router.use(
+  "/:interviewId/questions",
+  questionRoutes
 );
 
 export default router;
