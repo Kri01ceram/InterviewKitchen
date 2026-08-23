@@ -5,7 +5,6 @@ export const updateInterviewStatusSchema = z.object({
     "CREATED",
     "IN_PROGRESS",
     "COMPLETED",
-    "CANCELLED",
   ]),
 });
 
