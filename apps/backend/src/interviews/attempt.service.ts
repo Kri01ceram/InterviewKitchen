@@ -1,7 +1,7 @@
-import { attemptRepository } from "./attempt.repository.js";
-import { interviewRepository } from "./interview.repository.js";
 import AppError from "../shared/errors/AppError.js";
 import { HTTP_STATUS } from "../shared/constants/http.js";
+import { interviewRepository } from "./interview.repository.js";
+import { attemptRepository } from "./attempt.repository.js";
 
 export class AttemptService {
   constructor(
@@ -28,7 +28,7 @@ export class AttemptService {
 
     if (interview.status === "COMPLETED") {
       throw new AppError(
-        "Interview has already been completed.",
+        "Interview is already completed.",
         HTTP_STATUS.BAD_REQUEST
       );
     }
@@ -82,6 +82,37 @@ export class AttemptService {
     }
 
     return attempt;
+  }
+
+  async completeAttempt(
+    attemptId: string,
+    interviewId: string,
+    userId: string
+  ) {
+    const attempt =
+      await this.repository.findAttemptById(
+        attemptId,
+        interviewId,
+        userId
+      );
+
+    if (!attempt) {
+      throw new AppError(
+        "Attempt not found.",
+        HTTP_STATUS.NOT_FOUND
+      );
+    }
+
+    if (attempt.completedAt) {
+      throw new AppError(
+        "Attempt is already completed.",
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
+    return this.repository.completeAttempt(
+      attemptId
+    );
   }
 }
 

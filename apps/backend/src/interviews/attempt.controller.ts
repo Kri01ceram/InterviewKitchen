@@ -17,7 +17,7 @@ class AttemptController {
 
       return successResponse(
         res,
-        "Interview attempt created successfully.",
+        "Interview attempt started successfully.",
         { attempt },
         HTTP_STATUS.CREATED
       );
@@ -49,7 +49,7 @@ class AttemptController {
 
       const attempt =
         await attemptService.getAttemptById(
-          String(req.params.id),
+          String(req.params.attemptId),
           String(req.params.interviewId),
           userId
         );
@@ -62,6 +62,26 @@ class AttemptController {
       );
     }
   );
+
+  complete = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user.userId;
+
+    const attempt =
+      await attemptService.completeAttempt(
+        String(req.params.attemptId),
+        String(req.params.interviewId),
+        userId
+      );
+
+    return successResponse(
+      res,
+      "Interview attempt completed successfully.",
+      { attempt },
+      HTTP_STATUS.OK
+    );
+  }
+);
 }
 
 export const attemptController =

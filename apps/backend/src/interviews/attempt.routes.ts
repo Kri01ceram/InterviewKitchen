@@ -1,13 +1,18 @@
 import { Router } from "express";
 import { protect } from "../auth/auth.middleware.js";
+import { validate } from "../shared/middleware/validate.js";
+import { createAttemptSchema } from "./dto/create-attempt.dto.js";
 import { attemptController } from "./attempt.controller.js";
 
-const router = Router({ mergeParams: true });
+const router = Router({
+  mergeParams: true,
+});
 
 router.use(protect);
 
 router.post(
   "/",
+  validate(createAttemptSchema),
   attemptController.create
 );
 
@@ -17,8 +22,13 @@ router.get(
 );
 
 router.get(
-  "/:id",
+  "/:attemptId",
   attemptController.getById
+);
+
+router.patch(
+  "/:attemptId/complete",
+  attemptController.complete
 );
 
 export default router;

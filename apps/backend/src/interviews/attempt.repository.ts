@@ -41,6 +41,19 @@ export class AttemptRepository {
       },
     });
   }
+
+  async completeAttempt(
+    attemptId: string
+  ) {
+    return prisma.interviewAttempt.update({
+      where: {
+        id: attemptId,
+      },
+      data: {
+        completedAt: new Date(),
+      },
+    });
+  }
 }
 
 export const attemptRepository =
