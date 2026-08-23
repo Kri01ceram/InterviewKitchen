@@ -2,6 +2,7 @@ import type { CreateInterviewDto } from "./dto/create-interview.dto.js";
 import { interviewRepository } from "./interview.repository.js";
 import AppError from "../shared/errors/AppError.js";
 import { HTTP_STATUS } from "../shared/constants/http.js";
+import type { UpdateInterviewStatusDto } from "./dto/update-interview-status.dto.js";
 
 export class InterviewService {
   constructor(
@@ -41,6 +42,29 @@ export class InterviewService {
 
     return interview;
   }
+  async updateInterviewStatus(
+  interviewId: string,
+  userId: string,
+  status: UpdateInterviewStatusDto["status"]
+) {
+  const interview =
+    await this.repository.findInterviewById(
+      interviewId,
+      userId
+    );
+
+  if (!interview) {
+    throw new AppError(
+      "Interview not found.",
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  return this.repository.updateInterviewStatus(
+    interviewId,
+    status
+  );
+}
 }
 
 export const interviewService =

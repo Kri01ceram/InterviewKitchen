@@ -60,6 +60,25 @@ class InterviewController {
       );
     }
   );
+  updateStatus = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user.userId;
+
+    const interview =
+      await interviewService.updateInterviewStatus(
+        String(req.params.id),
+        userId,
+        req.body.status
+      );
+
+    return successResponse(
+      res,
+      "Interview status updated successfully.",
+      { interview },
+      HTTP_STATUS.OK
+    );
+  }
+);
 }
 
 export const interviewController =
