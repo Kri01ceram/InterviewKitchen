@@ -1,3 +1,4 @@
+import { InterviewStatus } from "@prisma/client";
 import { prisma } from "../lib/prisma.js";
 import type { CreateInterviewDto } from "./dto/create-interview.dto.js";
 
@@ -38,6 +39,19 @@ export class InterviewRepository {
       },
     });
   }
+  async updateInterviewStatus(
+  interviewId: string,
+  status: InterviewStatus
+) {
+  return prisma.interview.update({
+    where: {
+      id: interviewId,
+    },
+    data: {
+      status,
+    },
+  });
+}
 }
 
 export const interviewRepository =
