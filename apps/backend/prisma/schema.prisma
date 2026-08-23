@@ -70,18 +70,18 @@ enum InterviewStatus {
 }
 
 model Interview {
-  id          String              @id @default(cuid())
-  title       String
-  type        InterviewType
-  difficulty  InterviewDifficulty
-  status      InterviewStatus     @default(CREATED)
+  id         String   @id @default(cuid())
+  title      String
+  type       InterviewType
+  difficulty InterviewDifficulty
+  status     InterviewStatus
+  userId     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  userId      String
-  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   questions InterviewQuestion[]
+  attempts  InterviewAttempt[]
 }
 enum QuestionType {
   MCQ
@@ -89,16 +89,49 @@ enum QuestionType {
   SUBJECTIVE
 }
 model InterviewQuestion {
-  id            String       @id @default(cuid())
+  id            String   @id @default(cuid())
   question      String
   type          QuestionType
   options       Json?
   correctAnswer String?
   explanation   String?
-
   interviewId   String
-  interview     Interview    @relation(fields: [interviewId], references: [id], onDelete: Cascade)
 
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  interview Interview         @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  answers   InterviewAnswer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model InterviewAttempt {
+  id          String   @id @default(cuid())
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+  score       Float?
+  interviewId String
+  userId      String
+
+  interview Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  answers   InterviewAnswer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model InterviewAnswer {
+  id         String   @id @default(cuid())
+  answer     String
+  isCorrect  Boolean?
+  score      Float?
+  feedback   String?
+  attemptId  String
+  questionId String
+
+  attempt  InterviewAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question InterviewQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([attemptId, questionId])
 }
