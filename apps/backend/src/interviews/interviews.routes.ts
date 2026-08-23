@@ -12,6 +12,8 @@ import { updateInterviewStatusSchema } from "./dto/update-interview-status.dto.j
 
 import attemptRoutes from "./attempt.routes.js";
 
+import answerRoutes from "./answer.routes.js";
+
 const router = Router();
 
 router.use(protect);
@@ -43,6 +45,10 @@ router.patch(
   "/:id/status",
   validate(updateInterviewStatusSchema),
   interviewController.updateStatus
+);
+router.use(
+  "/:interviewId/attempts/:attemptId/answers",
+  answerRoutes
 );
 
 export default router;

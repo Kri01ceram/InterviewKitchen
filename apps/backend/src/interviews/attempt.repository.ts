@@ -54,6 +54,17 @@ export class AttemptRepository {
       },
     });
   }
+  async findAttemptByIdForUser(
+  attemptId: string,
+  userId: string
+) {
+  return prisma.interviewAttempt.findFirst({
+    where: {
+      id: attemptId,
+      userId,
+    },
+  });
+}
 }
 
 export const attemptRepository =
