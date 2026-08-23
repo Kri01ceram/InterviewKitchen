@@ -8,13 +8,14 @@ export class InterviewRepository {
     data: CreateInterviewDto
   ) {
     return prisma.interview.create({
-      data: {
-        title: data.title,
-        type: data.type,
-        difficulty: data.difficulty,
-        userId,
-      },
-    });
+  data: {
+    title: data.title,
+    type: data.type,
+    difficulty: data.difficulty,
+    status: "CREATED",
+    userId,
+  },
+});
   }
 
   async findInterviewsByUser(userId: string) {
