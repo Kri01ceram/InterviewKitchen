@@ -6,7 +6,8 @@ export class AnswerRepository {
   questionId: string,
   answer: string,
   isCorrect: boolean | null,
-  score: number | null
+  score: number | null,
+  feedback: string | null
 ) {
   return prisma.interviewAnswer.create({
     data: {
@@ -15,6 +16,7 @@ export class AnswerRepository {
       answer,
       isCorrect,
       score,
+      feedback,
     },
   });
 }
