@@ -2,18 +2,22 @@ import { prisma } from "../lib/prisma.js";
 
 export class AnswerRepository {
   async createAnswer(
-    attemptId: string,
-    questionId: string,
-    answer: string
-  ) {
-    return prisma.interviewAnswer.create({
-      data: {
-        attemptId,
-        questionId,
-        answer,
-      },
-    });
-  }
+  attemptId: string,
+  questionId: string,
+  answer: string,
+  isCorrect: boolean | null,
+  score: number | null
+) {
+  return prisma.interviewAnswer.create({
+    data: {
+      attemptId,
+      questionId,
+      answer,
+      isCorrect,
+      score,
+    },
+  });
+}
 
   async findAnswersByAttempt(
     attemptId: string
@@ -41,6 +45,7 @@ export class AnswerRepository {
       },
     });
   }
+  
 }
 
 export const answerRepository =

@@ -64,10 +64,20 @@ export class AnswerService {
       );
     }
 
+    let isCorrect: boolean | null = null;
+    let score: number | null = null;
+
+    if (question.type === "MCQ") {
+      isCorrect = question.correctAnswer === data.answer;
+      score = isCorrect ? 1 : 0;
+    }
+
     return this.repository.createAnswer(
       attemptId,
       questionId,
-      data.answer
+      data.answer,
+      isCorrect,
+      score
     );
   }
 
