@@ -129,6 +129,42 @@ export class QuestionService {
     data
   );
 }
+async deleteQuestion(
+  questionId: string,
+  interviewId: string,
+  userId: string
+) {
+  const interview =
+    await this.interviews.findInterviewById(
+      interviewId,
+      userId
+    );
+
+  if (!interview) {
+    throw new AppError(
+      "Interview not found.",
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  const question =
+    await this.repository.findQuestionById(
+      questionId,
+      interviewId
+    );
+
+  if (!question) {
+    throw new AppError(
+      "Question not found.",
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  await this.repository.deleteQuestion(
+    questionId,
+    interviewId
+  );
+}
 }
 
 export const questionService =

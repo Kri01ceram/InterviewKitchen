@@ -85,6 +85,24 @@ class QuestionController {
     );
   }
 );
+delete = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user.userId;
+
+    await questionService.deleteQuestion(
+      String(req.params.id),
+      String(req.params.interviewId),
+      userId
+    );
+
+    return successResponse(
+      res,
+      "Question deleted successfully.",
+      undefined,
+      HTTP_STATUS.OK
+    );
+  }
+);
 }
 
 export const questionController =

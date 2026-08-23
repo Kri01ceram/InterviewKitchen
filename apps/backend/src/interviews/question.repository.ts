@@ -78,6 +78,17 @@ export class QuestionRepository {
     },
   });
 }
+async deleteQuestion(
+  questionId: string,
+  interviewId: string
+) {
+  return prisma.interviewQuestion.deleteMany({
+    where: {
+      id: questionId,
+      interviewId,
+    },
+  });
+}
 }
 
 export const questionRepository =

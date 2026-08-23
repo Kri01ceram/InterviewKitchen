@@ -28,6 +28,11 @@ router.patch(
   questionController.update
 );
 
+router.delete(
+  "/:id",
+  questionController.delete
+);
+
 router.get(
   "/:id",
   questionController.getById
