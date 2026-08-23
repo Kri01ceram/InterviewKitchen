@@ -10,6 +10,8 @@ import questionRoutes from "./question.routes.js";
 
 import { updateInterviewStatusSchema } from "./dto/update-interview-status.dto.js";
 
+import attemptRoutes from "./attempt.routes.js";
+
 const router = Router();
 
 router.use(protect);
@@ -18,6 +20,10 @@ router.post(
   "/",
   validate(createInterviewSchema),
   interviewController.create
+);
+router.use(
+  "/:interviewId/attempts",
+  attemptRoutes
 );
 
 router.get(
