@@ -122,9 +122,8 @@ export class AttemptService {
     );
 
     return this.repository.completeAttempt(
-      attemptId,
-      score
-    );
+  attemptId
+);
   }
 }
 

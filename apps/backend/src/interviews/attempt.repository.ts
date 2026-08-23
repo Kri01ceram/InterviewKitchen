@@ -64,20 +64,35 @@ export class AttemptRepository {
     });
   }
 
-  async completeAttempt(
-    attemptId: string,
-    score: number
-  ) {
-    return prisma.interviewAttempt.update({
-      where: {
-        id: attemptId,
+  async completeAttempt(attemptId: string) {
+  const score =
+    await this.calculateAttemptScore(attemptId);
+
+  return prisma.interviewAttempt.update({
+    where: {
+      id: attemptId,
+    },
+    data: {
+      completedAt: new Date(),
+      score,
+    },
+  });
+}
+  async calculateAttemptScore(attemptId: string) {
+  const result = await prisma.interviewAnswer.aggregate({
+    where: {
+      attemptId,
+      score: {
+        not: null,
       },
-      data: {
-        score,
-        completedAt: new Date(),
-      },
-    });
-  }
+    },
+    _sum: {
+      score: true,
+    },
+  });
+
+  return result._sum.score ?? 0;
+}
 }
 
 export const attemptRepository =
