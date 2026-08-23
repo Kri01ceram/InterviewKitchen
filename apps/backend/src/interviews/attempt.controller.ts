@@ -64,24 +64,24 @@ class AttemptController {
   );
 
   complete = asyncHandler(
-  async (req: Request, res: Response) => {
-    const userId = req.user.userId;
+    async (req: Request, res: Response) => {
+      const userId = req.user.userId;
 
-    const attempt =
-      await attemptService.completeAttempt(
-        String(req.params.attemptId),
-        String(req.params.interviewId),
-        userId
+      const attempt =
+        await attemptService.completeAttempt(
+          String(req.params.attemptId),
+          String(req.params.interviewId),
+          userId
+        );
+
+      return successResponse(
+        res,
+        "Interview attempt completed successfully.",
+        { attempt },
+        HTTP_STATUS.OK
       );
-
-    return successResponse(
-      res,
-      "Interview attempt completed successfully.",
-      { attempt },
-      HTTP_STATUS.OK
-    );
-  }
-);
+    }
+  );
 }
 
 export const attemptController =

@@ -110,8 +110,20 @@ export class AttemptService {
       );
     }
 
+    const answers =
+      await this.repository.findAnswersForAttempt(
+        attemptId
+      );
+
+    const score = answers.reduce(
+      (total, answer) =>
+        total + (answer.score ?? 0),
+      0
+    );
+
     return this.repository.completeAttempt(
-      attemptId
+      attemptId,
+      score
     );
   }
 }

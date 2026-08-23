@@ -42,29 +42,42 @@ export class AttemptRepository {
     });
   }
 
-  async completeAttempt(
+  async findAttemptByIdForUser(
+    attemptId: string,
+    userId: string
+  ) {
+    return prisma.interviewAttempt.findFirst({
+      where: {
+        id: attemptId,
+        userId,
+      },
+    });
+  }
+
+  async findAnswersForAttempt(
     attemptId: string
+  ) {
+    return prisma.interviewAnswer.findMany({
+      where: {
+        attemptId,
+      },
+    });
+  }
+
+  async completeAttempt(
+    attemptId: string,
+    score: number
   ) {
     return prisma.interviewAttempt.update({
       where: {
         id: attemptId,
       },
       data: {
+        score,
         completedAt: new Date(),
       },
     });
   }
-  async findAttemptByIdForUser(
-  attemptId: string,
-  userId: string
-) {
-  return prisma.interviewAttempt.findFirst({
-    where: {
-      id: attemptId,
-      userId,
-    },
-  });
-}
 }
 
 export const attemptRepository =
