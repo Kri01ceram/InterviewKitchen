@@ -114,6 +114,23 @@ export class AttemptRepository {
 
   return Number(((earned / possible) * 100).toFixed(2));
 }
+async getAttemptResult(attemptId: string) {
+  return prisma.interviewAttempt.findUnique({
+    where: {
+      id: attemptId,
+    },
+    include: {
+      answers: {
+        include: {
+          question: true,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
+    },
+  });
+}
 }
 
 export const attemptRepository =

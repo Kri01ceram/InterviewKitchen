@@ -5,6 +5,8 @@ import { questionRepository } from "./question.repository.js";
 import { answerRepository } from "./answer.repository.js";
 import type { CreateAnswerDto } from "./dto/create-answer.dto.js";
 import type { UpdateAnswerDto } from "./dto/update-answer.dto.js";
+import { interviewRepository } from "./interview.repository.js";
+
 
 export class AnswerService {
   constructor(
@@ -155,6 +157,7 @@ export class AnswerService {
     data
   );
 }
+
 }
 
 export const answerService =

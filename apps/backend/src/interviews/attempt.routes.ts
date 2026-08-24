@@ -30,5 +30,8 @@ router.patch(
   "/:attemptId/complete",
   attemptController.complete
 );
-
+router.get(
+  "/:attemptId/result",
+  attemptController.getResult
+);
 export default router;

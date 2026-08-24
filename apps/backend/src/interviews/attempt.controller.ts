@@ -82,6 +82,25 @@ class AttemptController {
       );
     }
   );
+  getResult = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user.userId;
+
+    const result =
+      await attemptService.getAttemptResult(
+        String(req.params.attemptId),
+        String(req.params.interviewId),
+        userId
+      );
+
+    return successResponse(
+      res,
+      "Interview attempt result retrieved successfully.",
+      { result },
+      HTTP_STATUS.OK
+    );
+  }
+);
 }
 
 export const attemptController =

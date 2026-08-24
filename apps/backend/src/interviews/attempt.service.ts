@@ -141,6 +141,36 @@ await this.interviews.updateInterviewStatus(
 
 return completedAttempt;
   }
+  async getAttemptResult(
+  attemptId: string,
+  interviewId: string,
+  userId: string
+) {
+  const attempt =
+    await this.repository.findAttemptById(
+      attemptId,
+      interviewId,
+      userId
+    );
+
+  if (!attempt) {
+    throw new AppError(
+      "Attempt not found.",
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  if (!attempt.completedAt) {
+    throw new AppError(
+      "Attempt is not completed yet.",
+      HTTP_STATUS.BAD_REQUEST
+    );
+  }
+
+  return this.repository.getAttemptResult(
+    attemptId
+  );
+}
 }
 
 export const attemptService =
