@@ -1,4 +1,5 @@
 import { prisma } from "../lib/prisma.js";
+import { UpdateAnswerDto } from "./dto/update-answer.dto.js";
 
 export class AnswerRepository {
   async createAnswer(
@@ -47,6 +48,32 @@ export class AnswerRepository {
       },
     });
   }
+  async updateAnswer(
+  answerId: string,
+  data: UpdateAnswerDto
+) {
+  return prisma.interviewAnswer.update({
+    where: {
+      id: answerId,
+    },
+    data: {
+      isCorrect: data.isCorrect,
+      score: data.score,
+      feedback: data.feedback,
+    },
+  });
+}
+async findAnswerById(
+  answerId: string,
+  attemptId: string
+) {
+  return prisma.interviewAnswer.findFirst({
+    where: {
+      id: answerId,
+      attemptId,
+    },
+  });
+}
   
 }
 

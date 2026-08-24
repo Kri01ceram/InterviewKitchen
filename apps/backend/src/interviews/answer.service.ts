@@ -4,6 +4,7 @@ import { attemptRepository } from "./attempt.repository.js";
 import { questionRepository } from "./question.repository.js";
 import { answerRepository } from "./answer.repository.js";
 import type { CreateAnswerDto } from "./dto/create-answer.dto.js";
+import type { UpdateAnswerDto } from "./dto/update-answer.dto.js";
 
 export class AnswerService {
   constructor(
@@ -110,6 +111,50 @@ export class AnswerService {
       attemptId
     );
   }
+  async evaluateAnswer(
+  answerId: string,
+  attemptId: string,
+  userId: string,
+  data: UpdateAnswerDto
+) {
+  const attempt =
+    await this.attempts.findAttemptByIdForUser(
+      attemptId,
+      userId
+    );
+
+  if (!attempt) {
+    throw new AppError(
+      "Attempt not found.",
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  if (attempt.completedAt) {
+    throw new AppError(
+      "Cannot evaluate an answer after the attempt is completed.",
+      HTTP_STATUS.BAD_REQUEST
+    );
+  }
+
+  const answer =
+    await this.repository.findAnswerById(
+      answerId,
+      attemptId
+    );
+
+  if (!answer) {
+    throw new AppError(
+      "Answer not found.",
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  return this.repository.updateAnswer(
+    answerId,
+    data
+  );
+}
 }
 
 export const answerService =

@@ -44,6 +44,26 @@ class AnswerController {
       );
     }
   );
+  evaluate = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user.userId;
+
+    const answer =
+      await answerService.evaluateAnswer(
+        String(req.params.answerId),
+        String(req.params.attemptId),
+        userId,
+        req.body
+      );
+
+    return successResponse(
+      res,
+      "Answer evaluated successfully.",
+      { answer },
+      HTTP_STATUS.OK
+    );
+  }
+);
 }
 
 export const answerController =

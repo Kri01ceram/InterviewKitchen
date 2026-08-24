@@ -89,9 +89,19 @@ export class AttemptRepository {
     _sum: {
       score: true,
     },
+    _count: {
+      score: true,
+    },
   });
 
-  return result._sum.score ?? 0;
+  const totalQuestions = result._count.score;
+  const totalScore = result._sum.score ?? 0;
+
+  if (totalQuestions === 0) {
+    return 0;
+  }
+
+  return (totalScore / totalQuestions) * 100;
 }
 }
 

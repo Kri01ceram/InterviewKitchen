@@ -3,6 +3,7 @@ import { protect } from "../auth/auth.middleware.js";
 import { validate } from "../shared/middleware/validate.js";
 import { createAnswerSchema } from "./dto/create-answer.dto.js";
 import { answerController } from "./answer.controller.js";
+import { updateAnswerSchema } from "./dto/update-answer.dto.js";
 
 const router = Router({
   mergeParams: true,
@@ -20,5 +21,9 @@ router.get(
   "/",
   answerController.getAll
 );
-
+router.patch(
+  "/:answerId",
+  validate(updateAnswerSchema),
+  answerController.evaluate
+);
 export default router;
