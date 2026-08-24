@@ -29,12 +29,12 @@ export class QuestionService {
       );
     }
 
-    if (interview.status === "COMPLETED") {
-      throw new AppError(
-        "Cannot add questions to a completed interview.",
-        HTTP_STATUS.BAD_REQUEST
-      );
-    }
+    if (interview.status !== "CREATED") {
+  throw new AppError(
+    "Cannot modify questions after the interview has started.",
+    HTTP_STATUS.BAD_REQUEST
+  );
+}
 
     return this.repository.createQuestion(
       interviewId,
@@ -116,13 +116,14 @@ export class QuestionService {
         HTTP_STATUS.NOT_FOUND
       );
     }
+    
 
-    if (interview.status === "COMPLETED") {
-      throw new AppError(
-        "Cannot update questions of a completed interview.",
-        HTTP_STATUS.BAD_REQUEST
-      );
-    }
+    if (interview.status !== "CREATED") {
+  throw new AppError(
+    "Cannot modify questions after the interview has started.",
+    HTTP_STATUS.BAD_REQUEST
+  );
+}
 
     const question =
       await this.repository.findQuestionById(
@@ -162,12 +163,12 @@ export class QuestionService {
       );
     }
 
-    if (interview.status === "COMPLETED") {
-      throw new AppError(
-        "Cannot delete questions from a completed interview.",
-        HTTP_STATUS.BAD_REQUEST
-      );
-    }
+   if (interview.status !== "CREATED") {
+  throw new AppError(
+    "Cannot modify questions after the interview has started.",
+    HTTP_STATUS.BAD_REQUEST
+  );
+}
 
     const question =
       await this.repository.findQuestionById(

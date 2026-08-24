@@ -2,12 +2,14 @@ import AppError from "../shared/errors/AppError.js";
 import { HTTP_STATUS } from "../shared/constants/http.js";
 import { interviewRepository } from "./interview.repository.js";
 import { attemptRepository } from "./attempt.repository.js";
+import { questionRepository } from "./question.repository.js";
 
 export class AttemptService {
   constructor(
-    private readonly repository = attemptRepository,
-    private readonly interviews = interviewRepository
-  ) {}
+  private readonly repository = attemptRepository,
+  private readonly interviews = interviewRepository,
+  private readonly questions = questionRepository
+) {}
 
   async createAttempt(
     interviewId: string,
@@ -130,6 +132,22 @@ export class AttemptService {
         HTTP_STATUS.BAD_REQUEST
       );
     }
+    const questions =
+  await this.questions.findQuestionsByInterview(
+    interviewId
+  );
+
+const answers =
+  await this.repository.findAnswersForAttempt(
+    attemptId
+  );
+
+if (answers.length < questions.length) {
+  throw new AppError(
+    "Cannot complete the attempt until all questions are answered.",
+    HTTP_STATUS.BAD_REQUEST
+  );
+}
 
     const completedAttempt =
       await this.repository.completeAttempt(

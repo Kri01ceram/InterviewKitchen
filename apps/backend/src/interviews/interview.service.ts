@@ -70,20 +70,20 @@ export class InterviewService {
 
   if (
     interview.status === "CREATED" &&
-    status === "COMPLETED"
+    status !== "IN_PROGRESS"
   ) {
     throw new AppError(
-      "Interview must be in progress before it can be completed.",
+      "A created interview can only be moved to in progress.",
       HTTP_STATUS.BAD_REQUEST
     );
   }
 
   if (
     interview.status === "IN_PROGRESS" &&
-    status === "CREATED"
+    status !== "COMPLETED"
   ) {
     throw new AppError(
-      "An interview in progress cannot be reset.",
+      "An interview in progress can only be completed.",
       HTTP_STATUS.BAD_REQUEST
     );
   }
