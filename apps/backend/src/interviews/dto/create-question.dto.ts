@@ -1,19 +1,28 @@
 import { z } from "zod";
 
 export const createQuestionSchema = z.object({
-  question: z
+  question: z.string().min(1),
+
+  type: z.enum([
+    "MCQ",
+    "CODING",
+    "SUBJECTIVE",
+  ]),
+
+  options: z
+    .array(z.string())
+    .nullable()
+    .optional(),
+
+  correctAnswer: z
     .string()
-    .trim()
-    .min(5, "Question must be at least 5 characters.")
-    .max(2000, "Question must not exceed 2000 characters."),
+    .nullable()
+    .optional(),
 
-  type: z.enum(["MCQ", "CODING", "SUBJECTIVE"]),
-
-  options: z.array(z.string()).optional(),
-
-  correctAnswer: z.string().optional(),
-
-  explanation: z.string().max(2000).optional(),
+  explanation: z
+    .string()
+    .nullable()
+    .optional(),
 });
 
 export type CreateQuestionDto = z.infer<

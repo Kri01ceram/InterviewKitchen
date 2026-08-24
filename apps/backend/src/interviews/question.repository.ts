@@ -1,7 +1,7 @@
 import { prisma } from "../lib/prisma.js";
 import type { CreateQuestionDto } from "./dto/create-question.dto.js";
 import type { UpdateQuestionDto } from "./dto/update-question.dto.js";
-import { Prisma } from "@prisma/client";
+import { InterviewStatus, Prisma } from "@prisma/client";
 export class QuestionRepository {
   async createQuestion(
     interviewId: string,
@@ -86,6 +86,19 @@ async deleteQuestion(
     where: {
       id: questionId,
       interviewId,
+    },
+  });
+}
+async updateInterviewStatus(
+  interviewId: string,
+  status: InterviewStatus
+) {
+  return prisma.interview.update({
+    where: {
+      id: interviewId,
+    },
+    data: {
+      status,
     },
   });
 }
