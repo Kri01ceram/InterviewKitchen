@@ -136,6 +136,12 @@ export class AttemptService {
   await this.questions.findQuestionsByInterview(
     interviewId
   );
+  if (questions.length === 0) {
+  throw new AppError(
+    "Cannot complete an attempt without any questions.",
+    HTTP_STATUS.BAD_REQUEST
+  );
+}
 
 const answers =
   await this.repository.findAnswersForAttempt(
