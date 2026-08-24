@@ -16,7 +16,6 @@ export class QuestionService {
     userId: string,
     data: CreateQuestionDto
   ) {
-    // Make sure the interview exists and belongs to this user.
     const interview =
       await this.interviews.findInterviewById(
         interviewId,
@@ -27,6 +26,13 @@ export class QuestionService {
       throw new AppError(
         "Interview not found.",
         HTTP_STATUS.NOT_FOUND
+      );
+    }
+
+    if (interview.status === "COMPLETED") {
+      throw new AppError(
+        "Cannot add questions to a completed interview.",
+        HTTP_STATUS.BAD_REQUEST
       );
     }
 
@@ -91,80 +97,96 @@ export class QuestionService {
 
     return question;
   }
+
   async updateQuestion(
-  questionId: string,
-  interviewId: string,
-  userId: string,
-  data: UpdateQuestionDto
-) {
-  const interview =
-    await this.interviews.findInterviewById(
-      interviewId,
-      userId
-    );
+    questionId: string,
+    interviewId: string,
+    userId: string,
+    data: UpdateQuestionDto
+  ) {
+    const interview =
+      await this.interviews.findInterviewById(
+        interviewId,
+        userId
+      );
 
-  if (!interview) {
-    throw new AppError(
-      "Interview not found.",
-      HTTP_STATUS.NOT_FOUND
+    if (!interview) {
+      throw new AppError(
+        "Interview not found.",
+        HTTP_STATUS.NOT_FOUND
+      );
+    }
+
+    if (interview.status === "COMPLETED") {
+      throw new AppError(
+        "Cannot update questions of a completed interview.",
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
+    const question =
+      await this.repository.findQuestionById(
+        questionId,
+        interviewId
+      );
+
+    if (!question) {
+      throw new AppError(
+        "Question not found.",
+        HTTP_STATUS.NOT_FOUND
+      );
+    }
+
+    return this.repository.updateQuestion(
+      questionId,
+      interviewId,
+      data
     );
   }
 
-  const question =
-    await this.repository.findQuestionById(
+  async deleteQuestion(
+    questionId: string,
+    interviewId: string,
+    userId: string
+  ) {
+    const interview =
+      await this.interviews.findInterviewById(
+        interviewId,
+        userId
+      );
+
+    if (!interview) {
+      throw new AppError(
+        "Interview not found.",
+        HTTP_STATUS.NOT_FOUND
+      );
+    }
+
+    if (interview.status === "COMPLETED") {
+      throw new AppError(
+        "Cannot delete questions from a completed interview.",
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
+    const question =
+      await this.repository.findQuestionById(
+        questionId,
+        interviewId
+      );
+
+    if (!question) {
+      throw new AppError(
+        "Question not found.",
+        HTTP_STATUS.NOT_FOUND
+      );
+    }
+
+    await this.repository.deleteQuestion(
       questionId,
       interviewId
     );
-
-  if (!question) {
-    throw new AppError(
-      "Question not found.",
-      HTTP_STATUS.NOT_FOUND
-    );
   }
-
-  return this.repository.updateQuestion(
-    questionId,
-    interviewId,
-    data
-  );
-}
-async deleteQuestion(
-  questionId: string,
-  interviewId: string,
-  userId: string
-) {
-  const interview =
-    await this.interviews.findInterviewById(
-      interviewId,
-      userId
-    );
-
-  if (!interview) {
-    throw new AppError(
-      "Interview not found.",
-      HTTP_STATUS.NOT_FOUND
-    );
-  }
-
-  const question =
-    await this.repository.findQuestionById(
-      questionId,
-      interviewId
-    );
-
-  if (!question) {
-    throw new AppError(
-      "Question not found.",
-      HTTP_STATUS.NOT_FOUND
-    );
-  }
-
-  await this.repository.deleteQuestion(
-    questionId,
-    interviewId
-  );
-}
 }
 
 export const questionService =

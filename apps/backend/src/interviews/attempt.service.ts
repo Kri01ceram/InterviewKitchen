@@ -10,42 +10,55 @@ export class AttemptService {
   ) {}
 
   async createAttempt(
-  interviewId: string,
-  userId: string
-) {
-  const interview =
-    await this.interviews.findInterviewById(
+    interviewId: string,
+    userId: string
+  ) {
+    const interview =
+      await this.interviews.findInterviewById(
+        interviewId,
+        userId
+      );
+
+    if (!interview) {
+      throw new AppError(
+        "Interview not found.",
+        HTTP_STATUS.NOT_FOUND
+      );
+    }
+
+    if (interview.status === "COMPLETED") {
+      throw new AppError(
+        "Interview is already completed.",
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
+    const activeAttempt =
+      await this.repository.findActiveAttempt(
+        interviewId,
+        userId
+      );
+
+    if (activeAttempt) {
+      throw new AppError(
+        "An interview attempt is already in progress.",
+        HTTP_STATUS.CONFLICT
+      );
+    }
+
+    const attempt =
+      await this.repository.createAttempt(
+        interviewId,
+        userId
+      );
+
+    await this.interviews.updateInterviewStatus(
       interviewId,
-      userId
+      "IN_PROGRESS"
     );
 
-  if (!interview) {
-    throw new AppError(
-      "Interview not found.",
-      HTTP_STATUS.NOT_FOUND
-    );
+    return attempt;
   }
-
-  if (interview.status === "COMPLETED") {
-    throw new AppError(
-      "Interview is already completed.",
-      HTTP_STATUS.BAD_REQUEST
-    );
-  }
-
-  const attempt =
-    await this.repository.createAttempt(
-      interviewId,
-      userId
-    );
-
-  await this.interviews.updateInterviewStatus(
-    interviewId,
-    "IN_PROGRESS"
-  );
-
-  return attempt;
-}
 
   async getAttempts(
     interviewId: string,
@@ -118,59 +131,49 @@ export class AttemptService {
       );
     }
 
-    const answers =
-      await this.repository.findAnswersForAttempt(
+    const completedAttempt =
+      await this.repository.completeAttempt(
         attemptId
       );
 
-    const score = answers.reduce(
-      (total, answer) =>
-        total + (answer.score ?? 0),
-      0
-    );
-
-    const completedAttempt =
-  await this.repository.completeAttempt(
-    attemptId
-  );
-
-await this.interviews.updateInterviewStatus(
-  interviewId,
-  "COMPLETED"
-);
-
-return completedAttempt;
-  }
-  async getAttemptResult(
-  attemptId: string,
-  interviewId: string,
-  userId: string
-) {
-  const attempt =
-    await this.repository.findAttemptById(
-      attemptId,
+    await this.interviews.updateInterviewStatus(
       interviewId,
-      userId
+      "COMPLETED"
     );
 
-  if (!attempt) {
-    throw new AppError(
-      "Attempt not found.",
-      HTTP_STATUS.NOT_FOUND
-    );
+    return completedAttempt;
   }
 
-  if (!attempt.completedAt) {
-    throw new AppError(
-      "Attempt is not completed yet.",
-      HTTP_STATUS.BAD_REQUEST
+  async getAttemptResult(
+    attemptId: string,
+    interviewId: string,
+    userId: string
+  ) {
+    const attempt =
+      await this.repository.findAttemptById(
+        attemptId,
+        interviewId,
+        userId
+      );
+
+    if (!attempt) {
+      throw new AppError(
+        "Attempt not found.",
+        HTTP_STATUS.NOT_FOUND
+      );
+    }
+
+    if (!attempt.completedAt) {
+      throw new AppError(
+        "Attempt is not completed yet.",
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
+    return this.repository.getAttemptResult(
+      attemptId
     );
   }
-
-  return this.repository.getAttemptResult(
-    attemptId
-  );
-}
 }
 
 export const attemptService =
