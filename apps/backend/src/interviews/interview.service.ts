@@ -3,6 +3,7 @@ import { interviewRepository } from "./interview.repository.js";
 import AppError from "../shared/errors/AppError.js";
 import { HTTP_STATUS } from "../shared/constants/http.js";
 import type { UpdateInterviewStatusDto } from "./dto/update-interview-status.dto.js";
+import type { InterviewStatus } from "@prisma/client";
 
 export class InterviewService {
   constructor(
@@ -45,7 +46,7 @@ export class InterviewService {
   async updateInterviewStatus(
   interviewId: string,
   userId: string,
-  status: UpdateInterviewStatusDto["status"]
+  status: InterviewStatus
 ) {
   const interview =
     await this.repository.findInterviewById(
@@ -57,6 +58,33 @@ export class InterviewService {
     throw new AppError(
       "Interview not found.",
       HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  if (interview.status === "COMPLETED") {
+    throw new AppError(
+      "Completed interviews cannot change status.",
+      HTTP_STATUS.BAD_REQUEST
+    );
+  }
+
+  if (
+    interview.status === "CREATED" &&
+    status === "COMPLETED"
+  ) {
+    throw new AppError(
+      "Interview must be in progress before it can be completed.",
+      HTTP_STATUS.BAD_REQUEST
+    );
+  }
+
+  if (
+    interview.status === "IN_PROGRESS" &&
+    status === "CREATED"
+  ) {
+    throw new AppError(
+      "An interview in progress cannot be reset.",
+      HTTP_STATUS.BAD_REQUEST
     );
   }
 
