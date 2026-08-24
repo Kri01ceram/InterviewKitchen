@@ -79,29 +79,40 @@ export class AttemptRepository {
   });
 }
   async calculateAttemptScore(attemptId: string) {
-  const result = await prisma.interviewAnswer.aggregate({
+  const answers = await prisma.interviewAnswer.findMany({
     where: {
       attemptId,
       score: {
         not: null,
       },
     },
-    _sum: {
-      score: true,
-    },
-    _count: {
-      score: true,
+    include: {
+      question: true,
     },
   });
 
-  const totalQuestions = result._count.score;
-  const totalScore = result._sum.score ?? 0;
-
-  if (totalQuestions === 0) {
+  if (answers.length === 0) {
     return 0;
   }
 
-  return (totalScore / totalQuestions) * 100;
+  let earned = 0;
+  let possible = 0;
+
+  for (const answer of answers) {
+    if (answer.question.type === "MCQ") {
+      earned += answer.score ?? 0;
+      possible += 1;
+    } else {
+      earned += answer.score ?? 0;
+      possible += 10;
+    }
+  }
+
+  if (possible === 0) {
+    return 0;
+  }
+
+  return Number(((earned / possible) * 100).toFixed(2));
 }
 }
 
