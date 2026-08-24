@@ -153,6 +153,19 @@ export class AnswerService {
         HTTP_STATUS.NOT_FOUND
       );
     }
+    if (data.isCorrect && data.score === 0) {
+  throw new AppError(
+    "A correct answer must have a score greater than 0.",
+    HTTP_STATUS.BAD_REQUEST
+  );
+}
+
+if (!data.isCorrect && data.score > 0) {
+  throw new AppError(
+    "An incorrect answer cannot have a positive score.",
+    HTTP_STATUS.BAD_REQUEST
+  );
+}
 
     return this.repository.updateAnswer(
       answerId,

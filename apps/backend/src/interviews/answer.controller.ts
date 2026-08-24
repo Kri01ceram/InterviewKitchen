@@ -49,13 +49,13 @@ class AnswerController {
     const userId = req.user.userId;
 
     const answer =
-      await answerService.evaluateAnswer(
-        String(req.params.answerId),
-        String(req.params.attemptId),
-        userId,
-        req.body
-      );
-
+  await answerService.evaluateAnswer(
+    String(req.params.answerId),
+    String(req.params.attemptId),
+    String(req.params.interviewId),
+    req.user.userId,
+    req.body
+  );
     return successResponse(
       res,
       "Answer evaluated successfully.",

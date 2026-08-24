@@ -104,8 +104,8 @@ model InterviewQuestion {
   updatedAt DateTime @updatedAt
 }
 model InterviewAttempt {
-  id          String   @id @default(cuid())
-  startedAt   DateTime @default(now())
+  id          String    @id @default(cuid())
+  startedAt   DateTime  @default(now())
   completedAt DateTime?
   score       Float?
   interviewId String
@@ -116,6 +116,9 @@ model InterviewAttempt {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([interviewId, userId])
+  @@index([userId, completedAt])
 }
 
 model InterviewAnswer {
