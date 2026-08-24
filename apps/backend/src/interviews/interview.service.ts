@@ -93,6 +93,9 @@ export class InterviewService {
     status
   );
 }
+async getDashboardStats(userId: string) {
+  return this.repository.getDashboardStats(userId);
+}
 }
 
 export const interviewService =

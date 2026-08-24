@@ -32,7 +32,10 @@ router.get(
   "/",
   interviewController.getMine
 );
-
+router.get(
+  "/dashboard/stats",
+  interviewController.getDashboardStats
+);
 router.get(
   "/:id",
   interviewController.getById

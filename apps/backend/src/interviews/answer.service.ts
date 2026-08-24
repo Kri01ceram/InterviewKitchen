@@ -153,6 +153,12 @@ export class AnswerService {
         HTTP_STATUS.NOT_FOUND
       );
     }
+    if (answer.score !== null || answer.isCorrect !== null) {
+  throw new AppError(
+    "Answer has already been evaluated.",
+    HTTP_STATUS.CONFLICT
+  );
+}
     if (data.isCorrect && data.score === 0) {
   throw new AppError(
     "A correct answer must have a score greater than 0.",

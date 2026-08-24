@@ -194,9 +194,35 @@ if (answers.length < questions.length) {
       );
     }
 
-    return this.repository.getAttemptResult(
-      attemptId
-    );
+    const result =
+  await this.repository.getAttemptResult(
+    attemptId
+  );
+
+if (!result) {
+  throw new AppError(
+    "Attempt result not found.",
+    HTTP_STATUS.NOT_FOUND
+  );
+}
+
+return {
+  attempt: {
+    id: result.id,
+    startedAt: result.startedAt,
+    completedAt: result.completedAt,
+    score: result.score,
+  },
+  questions: result.answers.map((answer) => ({
+    questionId: answer.questionId,
+    question: answer.question.question,
+    type: answer.question.type,
+    answer: answer.answer,
+    isCorrect: answer.isCorrect,
+    score: answer.score,
+    feedback: answer.feedback,
+  })),
+};
   }
 }
 

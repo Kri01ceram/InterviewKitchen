@@ -6,6 +6,7 @@ import { successResponse } from "../shared/responses/api-response.js";
 import { HTTP_STATUS } from "../shared/constants/http.js";
 
 
+
 class InterviewController {
   create = asyncHandler(
     async (req: Request, res: Response) => {
@@ -75,6 +76,23 @@ class InterviewController {
       res,
       "Interview status updated successfully.",
       { interview },
+      HTTP_STATUS.OK
+    );
+  }
+);
+getDashboardStats = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user.userId;
+
+    const stats =
+      await interviewService.getDashboardStats(
+        userId
+      );
+
+    return successResponse(
+      res,
+      "Dashboard statistics retrieved successfully.",
+      { stats },
       HTTP_STATUS.OK
     );
   }
