@@ -97,6 +97,23 @@ getDashboardStats = asyncHandler(
     );
   }
 );
+getRecentAttempts = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user.userId;
+
+    const attempts =
+      await interviewService.getRecentAttempts(
+        userId
+      );
+
+    return successResponse(
+      res,
+      "Recent attempts retrieved successfully.",
+      { attempts },
+      HTTP_STATUS.OK
+    );
+  }
+);
 }
 
 export const interviewController =

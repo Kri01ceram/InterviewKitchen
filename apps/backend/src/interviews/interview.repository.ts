@@ -147,6 +147,32 @@ async getDashboardStats(userId: string) {
     bestScore,
   };
 }
+async getRecentAttempts(userId: string) {
+  return prisma.interviewAttempt.findMany({
+    where: {
+      userId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 10,
+    select: {
+      id: true,
+      score: true,
+      startedAt: true,
+      completedAt: true,
+      interview: {
+        select: {
+          id: true,
+          title: true,
+          type: true,
+          difficulty: true,
+          status: true,
+        },
+      },
+    },
+  });
+}
 }
 
 export const interviewRepository =

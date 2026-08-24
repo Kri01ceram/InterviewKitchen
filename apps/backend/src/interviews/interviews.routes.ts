@@ -37,6 +37,10 @@ router.get(
   interviewController.getDashboardStats
 );
 router.get(
+  "/dashboard/recent-attempts",
+  interviewController.getRecentAttempts
+);
+router.get(
   "/:id",
   interviewController.getById
 );

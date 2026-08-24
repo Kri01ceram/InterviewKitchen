@@ -96,6 +96,9 @@ export class InterviewService {
 async getDashboardStats(userId: string) {
   return this.repository.getDashboardStats(userId);
 }
+async getRecentAttempts(userId: string) {
+  return this.repository.getRecentAttempts(userId);
+}
 }
 
 export const interviewService =
