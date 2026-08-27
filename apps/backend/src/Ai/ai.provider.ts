@@ -3,7 +3,8 @@ import type {
   GenerateQuestionsInput,
   GeneratedQuestion,
 } from "./ai.types.js";
-import { AIService } from "./ai.service.js";  
+import { AIService } from "./ai.service.js";
+import { GeminiProvider } from "./gemini.provider.js";
 
 export class MockAIProvider implements AIProvider {
   async generateQuestions(
@@ -23,7 +24,7 @@ export class MockAIProvider implements AIProvider {
 }
 
 export const aiProvider =
-  new MockAIProvider();
+  new GeminiProvider();
 
 export const aiService =
   new AIService(aiProvider);
