@@ -171,6 +171,12 @@ export class AnswerService {
     const isCorrect =
       answer.answer.trim() ===
       question.correctAnswer?.trim();
+      if (answer.score !== null || answer.isCorrect !== null) {
+  throw new AppError(
+    "Answer has already been evaluated.",
+    HTTP_STATUS.CONFLICT
+  );
+}
 
     return this.repository.evaluateAnswer(
       answerId,

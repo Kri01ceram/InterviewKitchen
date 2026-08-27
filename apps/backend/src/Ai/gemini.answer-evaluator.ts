@@ -4,6 +4,7 @@ import type {
   AnswerEvaluation,
   EvaluateAnswerInput,
 } from "./answer-evaluator.types.js";
+import { evaluationSchema } from "./ai-evaluator.schema.js";
 
 const client = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -63,9 +64,9 @@ Rules:
       );
     }
 
-    const parsed = JSON.parse(text);
+   const parsed = JSON.parse(text);
 
-    return parsed as AnswerEvaluation;
+return evaluationSchema.parse(parsed);
   }
 }
 

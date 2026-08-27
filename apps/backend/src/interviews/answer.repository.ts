@@ -80,16 +80,11 @@ export class AnswerRepository {
   async evaluateAnswer(
   answerId: string,
   attemptId: string,
-  data: {
-    isCorrect: boolean | null;
-    score: number | null;
-    feedback: string | null;
-  }
+  data: UpdateAnswerDto
 ) {
-  return prisma.interviewAnswer.updateMany({
+  return prisma.interviewAnswer.update({
     where: {
       id: answerId,
-      attemptId,
     },
     data: {
       isCorrect: data.isCorrect,
