@@ -3,7 +3,7 @@ import type {
   GenerateQuestionsInput,
   GeneratedQuestion,
 } from "./ai.types.js";
-import { AIService } from "./ai.service.js";
+import { AIService } from "./ai.service.js";  
 
 export class MockAIProvider implements AIProvider {
   async generateQuestions(
