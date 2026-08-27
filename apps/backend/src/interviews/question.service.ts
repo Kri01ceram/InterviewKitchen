@@ -4,6 +4,7 @@ import { interviewRepository } from "./interview.repository.js";
 import AppError from "../shared/errors/AppError.js";
 import { HTTP_STATUS } from "../shared/constants/http.js";
 import type { UpdateQuestionDto } from "./dto/update-question.dto.js";
+import { aiService } from "../Ai/ai.provider.js";
 
 export class QuestionService {
   constructor(
@@ -188,6 +189,43 @@ export class QuestionService {
       interviewId
     );
   }
+  async generateQuestions(
+  interviewId: string,
+  userId: string,
+  count: number
+) {
+  const interview =
+    await this.interviews.findInterviewById(
+      interviewId,
+      userId
+    );
+
+  if (!interview) {
+    throw new AppError(
+      "Interview not found.",
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  if (interview.status === "COMPLETED") {
+    throw new AppError(
+      "Cannot generate questions for a completed interview.",
+      HTTP_STATUS.BAD_REQUEST
+    );
+  }
+
+  const generated =
+    await aiService.generateQuestions({
+      type: interview.type,
+      difficulty: interview.difficulty,
+      count,
+    });
+
+  return this.repository.createManyQuestions(
+    interviewId,
+    generated
+  );
+}
 }
 
 export const questionService =

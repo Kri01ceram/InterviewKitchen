@@ -103,6 +103,23 @@ delete = asyncHandler(
     );
   }
 );
+generate = asyncHandler(
+  async (req: Request, res: Response) => {
+    const questions =
+      await questionService.generateQuestions(
+        String(req.params.interviewId),
+        req.user.userId,
+        req.body.count
+      );
+
+    return successResponse(
+      res,
+      "Questions generated successfully.",
+      { questions },
+      HTTP_STATUS.CREATED
+    );
+  }
+);
 }
 
 export const questionController =

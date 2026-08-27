@@ -1,16 +1,12 @@
+import type { CreateQuestionDto } from "../interviews/dto/create-question.dto.js";
+
 export type GenerateQuestionsInput = {
   type: string;
   difficulty: string;
   count: number;
 };
 
-export type GeneratedQuestion = {
-  question: string;
-  type: "MCQ" | "SUBJECTIVE";
-  options: string[] | null;
-  correctAnswer: string | null;
-  explanation: string | null;
-};
+export type GeneratedQuestion = CreateQuestionDto;
 
 export type AIProvider = {
   generateQuestions(

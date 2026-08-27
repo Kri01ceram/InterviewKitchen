@@ -2,6 +2,7 @@ import { prisma } from "../lib/prisma.js";
 import type { CreateQuestionDto } from "./dto/create-question.dto.js";
 import type { UpdateQuestionDto } from "./dto/update-question.dto.js";
 import { InterviewStatus, Prisma } from "@prisma/client";
+
 export class QuestionRepository {
   async createQuestion(
     interviewId: string,
@@ -101,6 +102,28 @@ async updateInterviewStatus(
       status,
     },
   });
+}
+async createManyQuestions(
+  interviewId: string,
+  questions: CreateQuestionDto[]
+) {
+  return prisma.$transaction(
+    questions.map((question) =>
+      prisma.interviewQuestion.create({
+        data: {
+          interviewId,
+          question: question.question,
+          type: question.type,
+          options:
+  question.options === null
+    ? Prisma.JsonNull
+    : question.options,
+          correctAnswer: question.correctAnswer,
+          explanation: question.explanation,
+        },
+      })
+    )
+  );
 }
 }
 

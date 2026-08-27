@@ -16,7 +16,7 @@ export class MockAIProvider implements AIProvider {
         type: "SUBJECTIVE",
         options: null,
         correctAnswer: null,
-        explanation: null,
+        explanation: undefined,
       })
     );
   }

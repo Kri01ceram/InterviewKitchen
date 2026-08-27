@@ -7,6 +7,8 @@ import { createQuestionSchema } from "./dto/create-question.dto.js";
 import { questionController } from "./question.controller.js";
 import { updateQuestionSchema } from "./dto/update-question.dto.js";
 
+import { generateQuestionsSchema } from "./dto/generate-questions.dto.js";
+
 const router = Router({ mergeParams: true });
 
 router.use(protect);
@@ -36,6 +38,11 @@ router.delete(
 router.get(
   "/:id",
   questionController.getById
+);
+router.post(
+  "/generate",
+  validate(generateQuestionsSchema),
+  questionController.generate
 );
 
 export default router;
