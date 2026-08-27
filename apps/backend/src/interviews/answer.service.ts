@@ -5,14 +5,15 @@ import { questionRepository } from "./question.repository.js";
 import { answerRepository } from "./answer.repository.js";
 import type { CreateAnswerDto } from "./dto/create-answer.dto.js";
 import type { UpdateAnswerDto } from "./dto/update-answer.dto.js";
+import { geminiAnswerEvaluator } from "../Ai/gemini.answer-evaluator.js";
 
 export class AnswerService {
   constructor(
-    private readonly repository = answerRepository,
-    private readonly attempts = attemptRepository,
-    private readonly questions = questionRepository
-  ) {}
-
+  private readonly repository = answerRepository,
+  private readonly attempts = attemptRepository,
+  private readonly questions = questionRepository,
+  private readonly evaluator = geminiAnswerEvaluator
+) {}
   async createAnswer(
     attemptId: string,
     questionId: string,
@@ -113,72 +114,105 @@ export class AnswerService {
     );
   }
 
-  async evaluateAnswer(
-    answerId: string,
-    attemptId: string,
-    interviewId: string,
-    userId: string,
-    data: UpdateAnswerDto
-  ) {
-    const attempt =
-      await this.attempts.findAttemptById(
-        attemptId,
-        interviewId,
-        userId
-      );
-
-    if (!attempt) {
-      throw new AppError(
-        "Attempt not found.",
-        HTTP_STATUS.NOT_FOUND
-      );
-    }
-
-    if (attempt.completedAt) {
-      throw new AppError(
-        "Cannot evaluate an answer from a completed attempt.",
-        HTTP_STATUS.BAD_REQUEST
-      );
-    }
-
-    const answer =
-      await this.repository.findAnswerById(
-        answerId,
-        attemptId
-      );
-
-    if (!answer) {
-      throw new AppError(
-        "Answer not found.",
-        HTTP_STATUS.NOT_FOUND
-      );
-    }
-    if (answer.score !== null || answer.isCorrect !== null) {
-  throw new AppError(
-    "Answer has already been evaluated.",
-    HTTP_STATUS.CONFLICT
-  );
-}
-    if (data.isCorrect && data.score === 0) {
-  throw new AppError(
-    "A correct answer must have a score greater than 0.",
-    HTTP_STATUS.BAD_REQUEST
-  );
-}
-
-if (!data.isCorrect && data.score > 0) {
-  throw new AppError(
-    "An incorrect answer cannot have a positive score.",
-    HTTP_STATUS.BAD_REQUEST
-  );
-}
-
-    return this.repository.updateAnswer(
-      answerId,
+ async evaluateAnswer(
+  answerId: string,
+  attemptId: string,
+  interviewId: string,
+  userId: string
+) {
+  const attempt =
+    await this.attempts.findAttemptById(
       attemptId,
-      data
+      interviewId,
+      userId
+    );
+
+  if (!attempt) {
+    throw new AppError(
+      "Attempt not found.",
+      HTTP_STATUS.NOT_FOUND
     );
   }
+
+  if (attempt.completedAt) {
+    throw new AppError(
+      "Cannot evaluate an answer from a completed attempt.",
+      HTTP_STATUS.BAD_REQUEST
+    );
+  }
+
+  const answer =
+    await this.repository.findAnswerById(
+      answerId,
+      attemptId
+    );
+
+  if (!answer) {
+    throw new AppError(
+      "Answer not found.",
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  const question =
+    await this.questions.findQuestionById(
+      answer.questionId,
+      interviewId
+    );
+
+  if (!question) {
+    throw new AppError(
+      "Question not found.",
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  if (question.type === "MCQ") {
+    const isCorrect =
+      answer.answer.trim() ===
+      question.correctAnswer?.trim();
+
+    return this.repository.evaluateAnswer(
+      answerId,
+      attemptId,
+      {
+        isCorrect,
+        score: isCorrect ? 1 : 0,
+        feedback: isCorrect
+          ? "Correct answer."
+          : "Incorrect answer.",
+      }
+    );
+  }
+
+  if (
+    question.type === "SUBJECTIVE" ||
+    question.type === "CODING"
+  ) {
+    const evaluation =
+      await this.evaluator.evaluateAnswer({
+        question: question.question,
+        expectedAnswer: question.correctAnswer,
+        userAnswer: answer.answer,
+        questionType: question.type,
+      });
+
+    return this.repository.evaluateAnswer(
+      answerId,
+      attemptId,
+      {
+        isCorrect: evaluation.isCorrect,
+        score: evaluation.score,
+        feedback: evaluation.feedback,
+      }
+    );
+  }
+
+  throw new AppError(
+    "Unsupported question type.",
+    HTTP_STATUS.BAD_REQUEST
+  );
+}
 }
 
 export const answerService =

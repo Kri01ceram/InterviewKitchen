@@ -77,6 +77,27 @@ export class AnswerRepository {
       },
     });
   }
+  async evaluateAnswer(
+  answerId: string,
+  attemptId: string,
+  data: {
+    isCorrect: boolean | null;
+    score: number | null;
+    feedback: string | null;
+  }
+) {
+  return prisma.interviewAnswer.updateMany({
+    where: {
+      id: answerId,
+      attemptId,
+    },
+    data: {
+      isCorrect: data.isCorrect,
+      score: data.score,
+      feedback: data.feedback,
+    },
+  });
+}
 }
 
 export const answerRepository =

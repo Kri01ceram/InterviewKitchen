@@ -53,8 +53,7 @@ class AnswerController {
     String(req.params.answerId),
     String(req.params.attemptId),
     String(req.params.interviewId),
-    req.user.userId,
-    req.body
+    userId
   );
     return successResponse(
       res,
