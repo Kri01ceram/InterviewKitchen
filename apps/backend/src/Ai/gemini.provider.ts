@@ -4,6 +4,9 @@ import type {
   GenerateQuestionsInput,
   GeneratedQuestion,
 } from "./ai.types.js";
+import {
+  generatedQuestionsSchema,
+} from "./ai.schema.js";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -71,9 +74,18 @@ Return only valid JSON.
       );
     }
 
-    const parsed = JSON.parse(text);
+    const parsed: unknown = JSON.parse(text);
 
-    return parsed as GeneratedQuestion[];
+const questions =
+  generatedQuestionsSchema.parse(parsed);
+
+if (questions.length !== input.count) {
+  throw new Error(
+    `Gemini returned ${questions.length} questions, expected ${input.count}.`
+  );
+}
+
+return questions;
   }
 }
 
