@@ -80,6 +80,9 @@ export default function AttemptResultPage() {
   }
 
   const score = result.attempt.score ?? 0;
+  const correct = result.questions.filter((question) => question.isCorrect === true).length;
+  const incorrect = result.questions.filter((question) => question.isCorrect === false).length;
+  const pending = result.questions.filter((question) => question.isCorrect === null).length;
 
   return (
     <AppShell><main className="page-frame">
@@ -98,6 +101,7 @@ export default function AttemptResultPage() {
             <span>overall score</span>
           </div>
         </header>
+        <section className="result-stats" aria-label="Result summary"><div><strong>{result.questions.length}</strong><span>Questions</span></div><div><strong>{correct}</strong><span>Correct</span></div><div><strong>{incorrect}</strong><span>Incorrect</span></div><div><strong>{pending}</strong><span>Pending review</span></div></section>
 
         <section className="result-list" aria-label="Question results">
           {result.questions.map((question, index) => (

@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { register } from "@/lib/auth";
+import { PublicOnlyRoute } from "@/components/route-guards";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -56,6 +57,7 @@ export default function RegisterPage() {
   };
 
   return (
+    <PublicOnlyRoute>
     <main className="flex min-h-screen items-center justify-center p-6">
       <form
         onSubmit={handleSubmit}
@@ -121,5 +123,6 @@ export default function RegisterPage() {
         </p>
       </form>
     </main>
+    </PublicOnlyRoute>
   );
 }

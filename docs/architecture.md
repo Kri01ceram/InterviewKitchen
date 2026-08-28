@@ -24,9 +24,12 @@ The current web routes are:
 | `/register` | Create an account |
 | `/login` | Sign in |
 | `/dashboard` | Create and list interviews |
+| `/interviews/new` | Create an interview with validated settings |
 | `/interviews/:interviewId` | Manage questions and start an interview |
+| `/interviews/:interviewId/attempts` | Review and continue attempt history |
 | `/interviews/:interviewId/attempt/:attemptId` | Complete an attempt |
 | `/interviews/:interviewId/attempt/:attemptId/result` | Review score and feedback |
+| `/profile` | Update name and change password |
 
 ## System Overview
 
@@ -49,6 +52,8 @@ The frontend is a Next.js App Router application in `apps/web`.
 - The access token is sent as a Bearer token for protected requests.
 - `withCredentials` is enabled so the refresh cookie can be sent to the API.
 - The shared app shell provides navigation and logout for authenticated pages.
+- Protected pages verify the current session through `/auth/me`; auth pages redirect authenticated users to the dashboard.
+- Attempt pages restore submitted answers, provide question navigation, and warn before leaving an unfinished attempt.
 - Styling is provided by Tailwind CSS v4 and the global design tokens in `src/app/globals.css`.
 
 ### Backend
@@ -156,4 +161,7 @@ Only one active attempt is allowed for a user and interview. Completion requires
 - The frontend API base URL is currently `http://localhost:5000/api/v1` and is not yet environment-configurable.
 - Backend CORS is currently hard-coded for `http://localhost:3000`.
 - There is no pagination or filtering on list endpoints.
+- Previously submitted answers cannot currently be edited from the frontend because the backend answer `PATCH` endpoint evaluates an answer and ignores its request body.
+- Timed attempts and automatic submission are not currently implemented.
+- A dedicated forgot-password/reset-password flow is not implemented by the backend.
 - Automated test coverage is not yet configured in the application packages.

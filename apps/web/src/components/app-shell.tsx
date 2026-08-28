@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { logout } from "@/lib/auth";
+import { ProtectedRoute } from "./route-guards";
 
 export default function AppShell({
   children,
@@ -16,7 +17,7 @@ export default function AppShell({
   };
 
   return (
-    <>
+    <ProtectedRoute>
       <header className="app-header">
         <button className="brand" onClick={() => router.push("/dashboard")}>
           <span className="brand-mark">IK</span>
@@ -24,10 +25,11 @@ export default function AppShell({
         </button>
         <nav className="app-nav" aria-label="Main navigation">
           <button onClick={() => router.push("/dashboard")}>Dashboard</button>
+          <button onClick={() => router.push("/profile")}>Profile</button>
           <button className="nav-logout" onClick={handleLogout}>Log out</button>
         </nav>
       </header>
       {children}
-    </>
+    </ProtectedRoute>
   );
 }

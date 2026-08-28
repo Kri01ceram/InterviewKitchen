@@ -95,6 +95,9 @@ export default function InterviewPage() {
   }, [interviewId]);
 
   const handleGenerate = async () => {
+    if (questions.length > 0 && !window.confirm("Regenerate questions? This will replace the current question set.")) {
+      return;
+    }
     try {
       setError("");
       setGenerating(true);
@@ -265,6 +268,7 @@ export default function InterviewPage() {
                 </span>
               </div>
             </div>
+            <button className="button button-secondary" onClick={() => router.push(`/interviews/${interviewId}/attempts`)}>Attempt history</button>
           </div>
         </header>
 
@@ -440,6 +444,10 @@ export default function InterviewPage() {
 </button>
             </div>
           )}
+
+        {interview.status === "IN_PROGRESS" && (
+          <div className="mt-8 flex justify-end"><button className="button button-primary" onClick={() => router.push(`/interviews/${interviewId}/attempts`)}>Continue an attempt →</button></div>
+        )}
 
       </div>
     </main></AppShell>

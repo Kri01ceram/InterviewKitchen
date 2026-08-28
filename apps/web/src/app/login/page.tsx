@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/lib/auth";
+import { PublicOnlyRoute } from "@/components/route-guards";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -54,6 +55,7 @@ export default function LoginPage() {
   };
 
   return (
+    <PublicOnlyRoute>
     <main className="flex min-h-screen items-center justify-center p-6">
       <form
         onSubmit={handleSubmit}
@@ -111,5 +113,6 @@ export default function LoginPage() {
         </p>
       </form>
     </main>
+    </PublicOnlyRoute>
   );
 }

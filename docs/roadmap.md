@@ -115,13 +115,15 @@ GET http://localhost:5000/api/v1/health
 1. Open the frontend and select **Get started**.
 2. Register with a strong password.
 3. Log in.
-4. Create an interview by choosing its title, category, question format, and difficulty.
+4. Create an interview from `/interviews/new` by choosing its title, category, question format, and difficulty.
 5. Generate between 1 and 20 questions.
 6. Review the questions and start an attempt.
 7. Answer every question. MCQs are evaluated immediately; coding and subjective answers are evaluated through Gemini.
 8. Submit the final answer and open the result page.
 9. Review the overall score, each answer, correctness, and evaluator feedback.
-10. Log out when finished.
+10. Open attempt history to continue an unfinished attempt or revisit a completed result.
+11. Update account details or change the password from `/profile`.
+12. Log out when finished.
 
 ## Useful API Examples
 
@@ -202,10 +204,11 @@ The current backend allows `http://localhost:3000` only. Use that frontend URL d
 
 ### Product improvements
 
-- Add attempt history and dashboard statistics to the frontend.
+- Add dashboard statistics to the frontend.
 - Allow manual question editing and deletion in the interview setup screen.
+- Add answer editing support by extending the backend answer update contract.
 - Add interview search, filtering, and pagination.
-- Add progress persistence so users can safely resume interrupted attempts.
+- Add an optional timer and automatic submission for timed interviews.
 - Add richer scoring trends and feedback summaries across attempts.
 
 ### Deployment readiness

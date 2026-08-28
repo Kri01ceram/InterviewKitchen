@@ -23,6 +23,8 @@ type Interview = {
   difficulty: Difficulty;
   status: string;
   createdAt: string;
+  _count?: { questions: number; attempts: number };
+  attempts?: { id: string; score: number | null; completedAt: string | null }[];
 };
 
 export default function DashboardPage() {
@@ -153,9 +155,10 @@ export default function DashboardPage() {
       <main className="page-frame">
       <div className="mx-auto max-w-5xl">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold">
-            InterviewKitchen
-          </h1>
+          <div className="flex items-start justify-between gap-4">
+            <div><p className="eyebrow">Your practice kitchen</p><h1 className="page-title">Build your next edge.</h1></div>
+            <button className="button button-primary" onClick={() => router.push("/interviews/new")}>Create interview</button>
+          </div>
 
           <p className="mt-2 text-gray-500">
             Create and practice technical
@@ -292,7 +295,11 @@ export default function DashboardPage() {
                     type="button"
                     onClick={() =>
                       router.push(
-                        `/interviews/${interview.id}`
+                        interview.attempts?.[0]?.completedAt
+                          ? `/interviews/${interview.id}/attempt/${interview.attempts[0].id}/result`
+                          : interview.attempts?.[0]
+                            ? `/interviews/${interview.id}/attempt/${interview.attempts[0].id}`
+                            : `/interviews/${interview.id}`
                       )
                     }
                     className="rounded-xl border p-5 text-left transition hover:shadow-md"
@@ -324,6 +331,8 @@ export default function DashboardPage() {
                         {interview.status}
                       </span>
                     </div>
+                    <div className="mt-2 text-sm text-gray-500">{interview._count?.questions ?? 0} questions · {new Date(interview.createdAt).toLocaleDateString()}</div>
+                    <div className="mt-4 text-sm font-medium text-gray-700">{interview.status === "IN_PROGRESS" ? "Continue interview" : interview.status === "COMPLETED" ? "View completed interview" : "Prepare interview"} →</div>
                   </button>
                 )
               )}
