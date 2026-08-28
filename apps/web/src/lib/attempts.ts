@@ -14,7 +14,8 @@ export const createAttempt = async (
   interviewId: string
 ) => {
   const response = await api.post(
-    `/interviews/${interviewId}/attempts`
+    `/interviews/${interviewId}/attempts`,
+    {}
   );
 
   return response.data;

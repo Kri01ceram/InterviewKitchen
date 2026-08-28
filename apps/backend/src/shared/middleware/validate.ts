@@ -8,7 +8,7 @@ import { HTTP_STATUS } from "../constants/http.js";
 export const validate =
   <T>(schema: ZodType<T>) =>
   (req: Request, _res: Response, next: NextFunction) => {
-    const result = schema.safeParse(req.body);
+    const result = schema.safeParse(req.body ?? {});
 
     if (!result.success) {
       return next(
