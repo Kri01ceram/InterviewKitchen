@@ -6,6 +6,7 @@ import asyncHandler from "../shared/utils/async-handler.js";
 import { HTTP_STATUS } from "../shared/constants/http.js";
 import { AUTH_CONSTANTS } from "../shared/constants/auth.js";
 import { REFRESH_COOKIE_OPTIONS } from "../shared/constants/cookie.js";
+import AppError from "../shared/errors/AppError.js";
 import {
   AuthenticatedRequest,
   protect,
@@ -38,6 +39,38 @@ class AuthController {
       return successResponse(
         res,
         "Login successful.",
+        {
+          user: data.user,
+          accessToken: data.accessToken,
+        },
+        HTTP_STATUS.OK
+      );
+    }
+  );
+
+  refresh = asyncHandler(
+    async (req: Request, res: Response) => {
+      const refreshToken =
+        req.cookies?.[AUTH_CONSTANTS.COOKIE_NAME];
+
+      if (!refreshToken) {
+        throw new AppError(
+          "Refresh token is required.",
+          HTTP_STATUS.UNAUTHORIZED
+        );
+      }
+
+      const data = await authService.refresh(refreshToken);
+
+      res.cookie(
+        AUTH_CONSTANTS.COOKIE_NAME,
+        data.refreshToken,
+        REFRESH_COOKIE_OPTIONS
+      );
+
+      return successResponse(
+        res,
+        "Token refreshed successfully.",
         {
           user: data.user,
           accessToken: data.accessToken,

@@ -141,7 +141,37 @@ if (!matchedSession) {
   );
 }
 
-throw new Error("Not implemented.");
+const nextPayload = {
+  userId: matchedSession.user.id,
+  email: matchedSession.user.email,
+  role: matchedSession.user.role,
+};
+
+const accessToken =
+  await this.token.generateAccessToken(nextPayload);
+const nextRefreshToken =
+  await this.token.generateRefreshToken(nextPayload);
+const hashedRefreshToken =
+  await this.password.hashPassword(nextRefreshToken);
+
+await this.repository.updateRefreshToken(
+  matchedSession.id,
+  hashedRefreshToken,
+  new Date(
+    Date.now() + AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRY_MS
+  )
+);
+
+return {
+  user: {
+    id: matchedSession.user.id,
+    name: matchedSession.user.name,
+    email: matchedSession.user.email,
+    role: matchedSession.user.role,
+  },
+  accessToken,
+  refreshToken: nextRefreshToken,
+};
 }
 async logout(refreshToken: string): Promise<void> {
   const payload = await this.token.verifyRefreshToken(refreshToken);

@@ -1,9 +1,13 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api/v1",
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
 });
+
+type RetryableRequestConfig = {
+  _retry?: boolean;
+};
 
 api.interceptors.request.use((config) => {
   const token =
@@ -20,7 +24,39 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const requestConfig = error.config as
+      | (typeof error.config & RetryableRequestConfig)
+      | undefined;
+    const requestUrl = requestConfig?.url || "";
+    const isSessionRequest =
+      requestUrl.includes("/auth/login") ||
+      requestUrl.includes("/auth/register") ||
+      requestUrl.includes("/auth/refresh") ||
+      requestUrl.includes("/auth/logout");
+
+    if (
+      error.response?.status === 401 &&
+      typeof window !== "undefined" &&
+      requestConfig &&
+      !requestConfig._retry &&
+      !isSessionRequest
+    ) {
+      requestConfig._retry = true;
+
+      try {
+        const response = await api.post("/auth/refresh");
+        const accessToken = response.data.data.accessToken;
+
+        window.localStorage.setItem("accessToken", accessToken);
+        requestConfig.headers.Authorization = `Bearer ${accessToken}`;
+
+        return api(requestConfig);
+      } catch {
+        window.localStorage.removeItem("accessToken");
+      }
+    }
+
     if (
       error.response?.status === 401 &&
       typeof window !== "undefined" &&
