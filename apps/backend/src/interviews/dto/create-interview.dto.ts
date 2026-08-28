@@ -9,7 +9,15 @@ export const createInterviewSchema = z.object({
 
   type: z.enum(["TECHNICAL", "HR", "MIXED"]),
 
+  questionType: z.enum([
+    "MCQ",
+    "CODING",
+    "SUBJECTIVE",
+    "MIXED",
+  ]),
+
   difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
 });
 
-export type CreateInterviewDto = z.infer<typeof createInterviewSchema>;
+export type CreateInterviewDto =
+  z.infer<typeof createInterviewSchema>;

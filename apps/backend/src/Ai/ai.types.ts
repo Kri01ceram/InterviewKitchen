@@ -1,8 +1,9 @@
 import type { CreateQuestionDto } from "../interviews/dto/create-question.dto.js";
 
 export type GenerateQuestionsInput = {
-  type: string;
-  difficulty: string;
+  type: "TECHNICAL" | "HR" | "MIXED";
+  questionType: "MCQ" | "CODING" | "SUBJECTIVE" | "MIXED";
+  difficulty: "EASY" | "MEDIUM" | "HARD";
   count: number;
 };
 

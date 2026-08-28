@@ -4,19 +4,20 @@ import type { CreateInterviewDto } from "./dto/create-interview.dto.js";
 
 export class InterviewRepository {
   async createInterview(
-    userId: string,
-    data: CreateInterviewDto
-  ) {
-    return prisma.interview.create({
-  data: {
-    title: data.title,
-    type: data.type,
-    difficulty: data.difficulty,
-    status: "CREATED",
-    userId,
-  },
-});
-  }
+  userId: string,
+  data: CreateInterviewDto
+) {
+  return prisma.interview.create({
+    data: {
+      title: data.title,
+      type: data.type,
+      questionType: data.questionType,
+      difficulty: data.difficulty,
+      status: "CREATED",
+      userId,
+    },
+  });
+}
 
   async findInterviewsByUser(userId: string) {
   return prisma.interview.findMany({

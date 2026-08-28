@@ -214,9 +214,17 @@ export class QuestionService {
     );
   }
 
+  if (interview.status !== "CREATED") {
+    throw new AppError(
+      "Cannot generate questions after the interview has started.",
+      HTTP_STATUS.BAD_REQUEST
+    );
+  }
+
   const generated =
     await aiService.generateQuestions({
       type: interview.type,
+      questionType: interview.questionType,
       difficulty: interview.difficulty,
       count,
     });

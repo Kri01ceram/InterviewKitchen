@@ -1,11 +1,16 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import {
+  FormEvent,
+  useEffect,
+  useState,
+} from "react";
 import { useRouter } from "next/navigation";
 import {
   createInterview,
   getInterviews,
   type InterviewType,
+  type QuestionType,
   type Difficulty,
 } from "@/lib/interviews";
 
@@ -13,22 +18,29 @@ type Interview = {
   id: string;
   title: string;
   type: InterviewType;
+  questionType: QuestionType;
   difficulty: Difficulty;
   status: string;
   createdAt: string;
 };
 
-
-
 export default function DashboardPage() {
   const router = useRouter();
 
-  const [interviews, setInterviews] = useState<Interview[]>([]);
+  const [interviews, setInterviews] =
+    useState<Interview[]>([]);
+
   const [title, setTitle] = useState("");
+
   const [type, setType] =
     useState<InterviewType>("MIXED");
+
+  const [questionType, setQuestionType] =
+    useState<QuestionType>("MIXED");
+
   const [difficulty, setDifficulty] =
     useState<Difficulty>("MEDIUM");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -45,31 +57,31 @@ export default function DashboardPage() {
           );
         }
       } catch (err: unknown) {
-        if (!cancelled) {
-          if (
-            typeof err === "object" &&
-            err !== null &&
-            "response" in err
-          ) {
-            const response = (
-              err as {
-                response?: {
-                  data?: {
-                    message?: string;
-                  };
-                };
-              }
-            ).response;
+        if (cancelled) return;
 
-            setError(
-              response?.data?.message ||
-                "Failed to load interviews."
-            );
-          } else {
-            setError(
+        if (
+          typeof err === "object" &&
+          err !== null &&
+          "response" in err
+        ) {
+          const response = (
+            err as {
+              response?: {
+                data?: {
+                  message?: string;
+                };
+              };
+            }
+          ).response;
+
+          setError(
+            response?.data?.message ||
               "Failed to load interviews."
-            );
-          }
+          );
+        } else {
+          setError(
+            "Failed to load interviews."
+          );
         }
       }
     };
@@ -81,7 +93,9 @@ export default function DashboardPage() {
     };
   }, []);
 
-  const handleCreate = async (e: FormEvent) => {
+  const handleCreate = async (
+    e: FormEvent
+  ) => {
     e.preventDefault();
 
     setError("");
@@ -91,6 +105,7 @@ export default function DashboardPage() {
       const result = await createInterview({
         title,
         type,
+        questionType,
         difficulty,
       });
 
@@ -141,7 +156,8 @@ export default function DashboardPage() {
           </h1>
 
           <p className="mt-2 text-gray-500">
-            Create and practice technical interviews.
+            Create and practice technical
+            interviews.
           </p>
         </header>
 
@@ -160,6 +176,7 @@ export default function DashboardPage() {
             onSubmit={handleCreate}
             className="grid gap-4 md:grid-cols-4"
           >
+            {/* Interview title */}
             <input
               className="rounded-md border p-3 md:col-span-2"
               placeholder="Interview title"
@@ -170,6 +187,7 @@ export default function DashboardPage() {
               required
             />
 
+            {/* Interview category */}
             <select
               className="rounded-md border p-3"
               value={type}
@@ -179,13 +197,47 @@ export default function DashboardPage() {
                 )
               }
             >
-              <option value="MIXED">Mixed</option>
+              <option value="MIXED">
+                Mixed
+              </option>
+
               <option value="TECHNICAL">
                 Technical
               </option>
-              <option value="HR">HR</option>
+
+              <option value="HR">
+                HR
+              </option>
             </select>
 
+            {/* Question type */}
+            <select
+              className="rounded-md border p-3"
+              value={questionType}
+              onChange={(e) =>
+                setQuestionType(
+                  e.target.value as QuestionType
+                )
+              }
+            >
+              <option value="MIXED">
+                Mixed Questions
+              </option>
+
+              <option value="MCQ">
+                MCQ
+              </option>
+
+              <option value="SUBJECTIVE">
+                Subjective
+              </option>
+
+              <option value="CODING">
+                Coding
+              </option>
+            </select>
+
+            {/* Difficulty */}
             <select
               className="rounded-md border p-3"
               value={difficulty}
@@ -195,9 +247,17 @@ export default function DashboardPage() {
                 )
               }
             >
-              <option value="EASY">Easy</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="HARD">Hard</option>
+              <option value="EASY">
+                Easy
+              </option>
+
+              <option value="MEDIUM">
+                Medium
+              </option>
+
+              <option value="HARD">
+                Hard
+              </option>
             </select>
 
             <button
@@ -223,32 +283,48 @@ export default function DashboardPage() {
             </p>
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
-              {interviews.map((interview) => (
-                <button
-                  key={interview.id}
-                  type="button"
-                  onClick={() =>
-                    router.push(
-                      `/interviews/${interview.id}`
-                    )
-                  }
-                  className="rounded-xl border p-5 text-left transition hover:shadow-md"
-                >
-                  <h3 className="font-semibold">
-                    {interview.title}
-                  </h3>
+              {interviews.map(
+                (interview) => (
+                  <button
+                    key={interview.id}
+                    type="button"
+                    onClick={() =>
+                      router.push(
+                        `/interviews/${interview.id}`
+                      )
+                    }
+                    className="rounded-xl border p-5 text-left transition hover:shadow-md"
+                  >
+                    <h3 className="font-semibold">
+                      {interview.title}
+                    </h3>
 
-                  <div className="mt-3 flex gap-2 text-sm text-gray-500">
-                    <span>{interview.type}</span>
-                    <span>•</span>
-                    <span>
-                      {interview.difficulty}
-                    </span>
-                    <span>•</span>
-                    <span>{interview.status}</span>
-                  </div>
-                </button>
-              ))}
+                    <div className="mt-3 flex flex-wrap gap-2 text-sm text-gray-500">
+                      <span>
+                        {interview.type}
+                      </span>
+
+                      <span>•</span>
+
+                      <span>
+                        {interview.questionType}
+                      </span>
+
+                      <span>•</span>
+
+                      <span>
+                        {interview.difficulty}
+                      </span>
+
+                      <span>•</span>
+
+                      <span>
+                        {interview.status}
+                      </span>
+                    </div>
+                  </button>
+                )
+              )}
             </div>
           )}
         </section>

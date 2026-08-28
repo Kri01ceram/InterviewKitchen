@@ -70,23 +70,32 @@ enum InterviewStatus {
 }
 
 model Interview {
-  id         String   @id @default(cuid())
-  title      String
-  type       InterviewType
-  difficulty InterviewDifficulty
-  status     InterviewStatus
-  userId     String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id           String              @id @default(cuid())
+  title        String
+  type         InterviewType
+  questionType InterviewQuestionType      @default(MIXED)
+  difficulty   InterviewDifficulty
+  status       InterviewStatus
+  userId       String
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
 
-  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  questions InterviewQuestion[]
-  attempts  InterviewAttempt[]
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questions    InterviewQuestion[]
+  attempts     InterviewAttempt[]
+
+  // ...
 }
 enum QuestionType {
   MCQ
   CODING
   SUBJECTIVE
+}
+enum InterviewQuestionType {
+  MCQ
+  CODING
+  SUBJECTIVE
+  MIXED
 }
 model InterviewQuestion {
   id            String   @id @default(cuid())

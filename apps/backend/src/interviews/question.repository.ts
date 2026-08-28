@@ -21,17 +21,27 @@ export class QuestionRepository {
   }
 
   async findQuestionsByInterview(
-    interviewId: string
-  ) {
-    return prisma.interviewQuestion.findMany({
-      where: {
-        interviewId,
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
-  }
+  interviewId: string
+) {
+  return prisma.interviewQuestion.findMany({
+    where: {
+      interviewId,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+    select: {
+      id: true,
+      question: true,
+      type: true,
+      options: true,
+      explanation: true,
+      interviewId: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+}
 
   async findQuestionById(
     questionId: string,
@@ -114,12 +124,17 @@ async createManyQuestions(
           interviewId,
           question: question.question,
           type: question.type,
+
           options:
-  question.options === null
-    ? Prisma.JsonNull
-    : question.options,
-          correctAnswer: question.correctAnswer,
-          explanation: question.explanation,
+            question.options == null
+              ? Prisma.JsonNull
+              : question.options,
+
+          correctAnswer:
+            question.correctAnswer ?? null,
+
+          explanation:
+            question.explanation ?? null,
         },
       })
     )
