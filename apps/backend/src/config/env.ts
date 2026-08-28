@@ -20,7 +20,9 @@ const envSchema = z.object({
     "JWT_REFRESH_SECRET must be at least 32 characters."
   ),
 
-  OPENAI_API_KEY: z.string().optional(),
+  GEMINI_API_KEY: z.string().optional(),
+  GEMINI_MODEL: z.string().optional(),
+  FRONTEND_URL: z.string().url(),
 });
 
 export const env = envSchema.parse(process.env);
