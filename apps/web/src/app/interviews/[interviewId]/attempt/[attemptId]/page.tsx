@@ -7,8 +7,12 @@ import {
   getQuestions,
   type InterviewQuestion,
 } from "@/lib/interviews";
+import {
+  completeAttempt,
+} from "@/lib/attempts";
 
 import { createAnswer } from "@/lib/answers";
+import AppShell from "@/components/app-shell";
 
 export default function AttemptPage() {
   const params = useParams();
@@ -110,19 +114,24 @@ export default function AttemptPage() {
       );
 
       if (
-        currentIndex <
-        questions.length - 1
-      ) {
-        setCurrentIndex(
-          currentIndex + 1
-        );
+  currentIndex <
+  questions.length - 1
+) {
+  setCurrentIndex(
+    currentIndex + 1
+  );
 
-        setAnswer("");
-      } else {
-        router.push(
-          `/interviews/${interviewId}/attempt/${attemptId}/complete`
-        );
-      }
+  setAnswer("");
+} else {
+  await completeAttempt(
+    interviewId,
+    attemptId
+  );
+
+  router.push(
+    `/interviews/${interviewId}/attempt/${attemptId}/result`
+  );
+}
     } catch (err: unknown) {
       if (
         typeof err === "object" &&
@@ -155,13 +164,13 @@ export default function AttemptPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen p-8">
+      <AppShell><main className="page-frame">
         <div className="mx-auto max-w-3xl">
           <p className="text-gray-500">
             Loading interview...
           </p>
         </div>
-      </main>
+      </main></AppShell>
     );
   }
 
@@ -191,7 +200,7 @@ export default function AttemptPage() {
   }
 
   return (
-    <main className="min-h-screen p-8">
+    <AppShell><main className="page-frame">
       <div className="mx-auto max-w-3xl">
 
         <header className="mb-8">
@@ -323,6 +332,6 @@ export default function AttemptPage() {
         </section>
 
       </div>
-    </main>
+    </main></AppShell>
   );
 }

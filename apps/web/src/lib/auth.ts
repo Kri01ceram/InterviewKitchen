@@ -1,4 +1,4 @@
-import  api  from "./api";
+import api from "./api";
 
 export type RegisterInput = {
   name: string;
@@ -9,6 +9,13 @@ export type RegisterInput = {
 export type LoginInput = {
   email: string;
   password: string;
+};
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
 };
 
 export const register = async (data: RegisterInput) => {
@@ -29,6 +36,17 @@ export const login = async (data: LoginInput) => {
 };
 
 export const logout = async () => {
-  const response = await api.post("/auth/logout");
+  try {
+    const response = await api.post("/auth/logout");
+    return response.data;
+  } finally {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("accessToken");
+    }
+  }
+};
+
+export const getCurrentUser = async () => {
+  const response = await api.get("/auth/me");
   return response.data;
 };

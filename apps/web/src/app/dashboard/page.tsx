@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
+import AppShell from "@/components/app-shell";
 import {
   createInterview,
   getInterviews,
@@ -148,7 +149,8 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="min-h-screen p-8">
+    <AppShell>
+      <main className="page-frame">
       <div className="mx-auto max-w-5xl">
         <header className="mb-8">
           <h1 className="text-3xl font-bold">
@@ -329,6 +331,7 @@ export default function DashboardPage() {
           )}
         </section>
       </div>
-    </main>
+      </main>
+    </AppShell>
   );
 }

@@ -67,25 +67,37 @@ private validatePayload(
 async verifyAccessToken(
   token: string
 ): Promise<JwtPayload> {
+  try {
+    const { payload } = await jwtVerify(
+      token,
+      this.accessSecret
+    );
 
-  const { payload } = await jwtVerify(
-    token,
-    this.accessSecret
-  );
-
-  return this.validatePayload(payload);
+    return this.validatePayload(payload);
+  } catch {
+    throw new AppError(
+      "Invalid or expired access token.",
+      401
+    );
+  }
 }
 
   async verifyRefreshToken(
   token: string
 ): Promise<JwtPayload> {
+  try {
+    const { payload } = await jwtVerify(
+      token,
+      this.refreshSecret
+    );
 
-  const { payload } = await jwtVerify(
-    token,
-    this.refreshSecret
-  );
-
-  return this.validatePayload(payload);
+    return this.validatePayload(payload);
+  } catch {
+    throw new AppError(
+      "Invalid or expired refresh token.",
+      401
+    );
+  }
 }
 }
 

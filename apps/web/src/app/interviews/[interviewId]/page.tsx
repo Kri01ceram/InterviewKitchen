@@ -14,6 +14,7 @@ import {
   type InterviewQuestion,
 } from "@/lib/interviews";
 import { createAttempt } from "@/lib/attempts";
+import AppShell from "@/components/app-shell";
 
 export default function InterviewPage() {
   const params = useParams();
@@ -139,19 +140,19 @@ export default function InterviewPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen p-8">
+      <AppShell><main className="page-frame">
         <div className="mx-auto max-w-4xl">
           <p className="text-gray-500">
             Loading interview...
           </p>
         </div>
-      </main>
+      </main></AppShell>
     );
   }
 
   if (!interview) {
     return (
-      <main className="min-h-screen p-8">
+      <AppShell><main className="page-frame">
         <div className="mx-auto max-w-4xl">
           <div className="rounded-xl border p-6">
             <h1 className="text-xl font-semibold">
@@ -168,7 +169,7 @@ export default function InterviewPage() {
             </button>
           </div>
         </div>
-      </main>
+      </main></AppShell>
     );
   }
   const handleStart = async () => {
@@ -225,7 +226,7 @@ export default function InterviewPage() {
     interview.status === "CREATED";
 
   return (
-    <main className="min-h-screen p-8">
+    <AppShell><main className="page-frame">
       <div className="mx-auto max-w-4xl">
 
         {/* Header */}
@@ -441,6 +442,6 @@ export default function InterviewPage() {
           )}
 
       </div>
-    </main>
+    </main></AppShell>
   );
 }
