@@ -117,7 +117,7 @@ GET http://localhost:5000/api/v1/health
 3. Log in.
 4. Create an interview from `/interviews/new` by choosing its title, category, question format, and difficulty.
 5. Generate between 1 and 20 questions.
-6. Review the questions and start an attempt.
+6. Confirm the question set is ready and start an attempt.
 7. Answer every question. MCQs are evaluated immediately; coding and subjective answers are evaluated through Gemini.
 8. Submit the final answer and open the result page.
 9. Review the overall score, each answer, correctness, and evaluator feedback.

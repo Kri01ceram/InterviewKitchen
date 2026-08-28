@@ -340,94 +340,18 @@ export default function InterviewPage() {
           </section>
         )}
 
-        {/* Questions */}
-
-        <section>
-          <div className="mb-5 flex items-center justify-between">
-            <h2 className="text-xl font-semibold">
-              Questions
-            </h2>
-
-            <span className="text-sm text-gray-500">
-              {questions.length} questions
-            </span>
-          </div>
-
-          {questions.length === 0 ? (
-            <div className="rounded-xl border border-dashed p-10 text-center">
-              <h3 className="font-semibold">
-                No questions yet
-              </h3>
-
-              <p className="mt-2 text-sm text-gray-500">
-                Generate questions to prepare
-                this interview.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {questions.map(
-                (question, index) => (
-                  <div
-                    key={question.id}
-                    className="rounded-xl border p-6"
-                  >
-                    <div className="mb-4 flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-500">
-                        Question {index + 1}
-                      </span>
-
-                      <span className="rounded-full border px-3 py-1 text-xs">
-                        {question.type}
-                      </span>
-                    </div>
-
-                    <h3 className="text-lg font-medium">
-                      {question.question}
-                    </h3>
-
-                    {question.type ===
-                      "MCQ" &&
-                      question.options && (
-                        <div className="mt-5 space-y-2">
-                          {question.options.map(
-                            (
-                              option,
-                              optionIndex
-                            ) => (
-                              <div
-                                key={optionIndex}
-                                className="rounded-md border p-3"
-                              >
-                                <span className="mr-2 font-medium">
-                                  {String.fromCharCode(
-                                    65 +
-                                      optionIndex
-                                  )}
-                                  .
-                                </span>
-
-                                {option}
-                              </div>
-                            )
-                          )}
-                        </div>
-                      )}
-
-                    {question.explanation && (
-                      <div className="mt-5 rounded-md bg-gray-50 p-4 text-sm text-gray-600">
-                        <span className="font-medium">
-                          Explanation:
-                        </span>{" "}
-                        {question.explanation}
-                      </div>
-                    )}
-                  </div>
-                )
-              )}
-            </div>
-          )}
-        </section>
+        {questions.length > 0 ? (
+          <section className="panel readiness-panel">
+            <p className="eyebrow">Ready when you are</p>
+            <h2 className="mt-2 text-2xl font-semibold">Your interview is prepared.</h2>
+            <p className="mt-2 text-gray-500">{questions.length} questions are ready. Start when you want to enter the practice session.</p>
+          </section>
+        ) : (
+          <section className="rounded-xl border border-dashed p-10 text-center">
+            <h2 className="font-semibold">No questions yet</h2>
+            <p className="mt-2 text-sm text-gray-500">Generate questions to prepare this interview.</p>
+          </section>
+        )}
 
         {/* Start */}
 

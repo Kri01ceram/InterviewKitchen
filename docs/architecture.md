@@ -8,7 +8,7 @@ InterviewKitchen is an AI-assisted interview practice application. An authentica
 2. Choose `TECHNICAL`, `HR`, or `MIXED` interview topics.
 3. Choose `MCQ`, `CODING`, `SUBJECTIVE`, or `MIXED` questions.
 4. Generate between 1 and 20 questions with Gemini AI.
-5. Review generated questions before starting an attempt.
+5. Generate a private question set and start an attempt when ready.
 6. Start an attempt and answer questions one at a time.
 7. Submit MCQ, subjective, and coding answers.
 8. Receive immediate MCQ evaluation and AI evaluation for subjective/coding answers.
