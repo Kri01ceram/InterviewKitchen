@@ -19,6 +19,9 @@ export default function errorHandler(
 
   return res.status(500).json({
     success: false,
-    message: "Internal Server Error",
+    message:
+      process.env.NODE_ENV === "production"
+        ? "Internal Server Error"
+        : err.message || "Internal Server Error",
   });
 }

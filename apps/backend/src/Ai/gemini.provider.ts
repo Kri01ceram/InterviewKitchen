@@ -7,6 +7,27 @@ import type {
 import {
   generatedQuestionsSchema,
 } from "./ai.schema.js";
+import AppError from "../shared/errors/AppError.js";
+
+const FALLBACK_GEMINI_MODEL = "gemini-3.6-flash";
+
+const resolveGeminiModel = () => {
+  const configuredModel = process.env.GEMINI_MODEL?.trim();
+
+  if (
+    configuredModel === "gemini-2.5-flash" ||
+    configuredModel === "gemini-2.5-flash-lite" ||
+    configuredModel === "gemini-2.0-flash"
+  ) {
+    return FALLBACK_GEMINI_MODEL;
+  }
+
+  if (configuredModel && configuredModel !== "gemini-3.6-flash") {
+    return FALLBACK_GEMINI_MODEL;
+  }
+
+  return configuredModel || FALLBACK_GEMINI_MODEL;
+};
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -16,6 +37,13 @@ export class GeminiProvider implements AIProvider {
   async generateQuestions(
     input: GenerateQuestionsInput
   ): Promise<GeneratedQuestion[]> {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new AppError(
+        "Gemini API key is missing. Configure GEMINI_API_KEY in the backend environment.",
+        500
+      );
+    }
+
     const prompt = `
 You are an expert interview question generator.
 
@@ -114,8 +142,7 @@ Generate exactly ${input.count} questions.
 `;
 
     const response = await ai.models.generateContent({
-      model:
-        process.env.GEMINI_MODEL ?? "gemini-2.5-flash",
+      model: resolveGeminiModel(),
       contents: prompt,
     });
 
