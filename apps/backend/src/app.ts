@@ -15,11 +15,29 @@ import userRoutes from "./users/user.routes.js";
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  env.FRONTEND_URL,
+];
+
 app.use(
   cors({
-  origin: env.FRONTEND_URL,
-  credentials: true,
-})
+    origin: (origin, callback) => {
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
 );
 app.use(helmet());
 app.use(express.json());
