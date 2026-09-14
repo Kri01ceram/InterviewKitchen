@@ -171,7 +171,7 @@ Content-Type: application/json
 
 ### `JWTExpired` or `Invalid or expired access token`
 
-Access tokens expire after 15 minutes. The frontend clears the stale token and redirects to `/login`. Log in again. The backend does not currently expose a refresh endpoint.
+Access tokens expire after 15 minutes. The frontend attempts `/api/v1/auth/refresh` using the HttpOnly refresh cookie. If refresh fails, it clears the in-memory token and redirects to `/login`.
 
 ### Database connection errors
 
@@ -196,8 +196,8 @@ The current backend allows `http://localhost:3000` only. Use that frontend URL d
 
 ### Next priorities
 
-- Add an access-token refresh endpoint and automatic frontend token renewal.
-- Move access-token handling away from `localStorage` toward a secure HttpOnly cookie strategy.
+- Add refresh-token reuse detection and session revocation for password changes.
+- Consider moving access-token handling to a secure HttpOnly cookie strategy.
 - Make frontend API URL and backend CORS origins environment-configurable.
 - Add automated backend integration tests for auth, ownership, status transitions, and attempt completion.
 - Add frontend tests for authentication redirects, answer submission, and result rendering.

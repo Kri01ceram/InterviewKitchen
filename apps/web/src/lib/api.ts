@@ -1,5 +1,11 @@
 import axios from "axios";
 
+let accessToken: string | null = null;
+
+export const setAccessToken = (token: string | null) => {
+  accessToken = token;
+};
+
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
@@ -10,13 +16,8 @@ type RetryableRequestConfig = {
 };
 
 api.interceptors.request.use((config) => {
-  const token =
-    typeof window !== "undefined"
-      ? window.localStorage.getItem("accessToken")
-      : null;
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
   }
 
   return config;
@@ -48,12 +49,12 @@ api.interceptors.response.use(
         const response = await api.post("/auth/refresh");
         const accessToken = response.data.data.accessToken;
 
-        window.localStorage.setItem("accessToken", accessToken);
+        setAccessToken(accessToken);
         requestConfig.headers.Authorization = `Bearer ${accessToken}`;
 
         return api(requestConfig);
       } catch {
-        window.localStorage.removeItem("accessToken");
+        setAccessToken(null);
       }
     }
 
@@ -63,7 +64,7 @@ api.interceptors.response.use(
       window.location.pathname !== "/login" &&
       window.location.pathname !== "/register"
     ) {
-      window.localStorage.removeItem("accessToken");
+      setAccessToken(null);
       window.location.assign("/login");
     }
 

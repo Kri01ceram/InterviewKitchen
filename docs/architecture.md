@@ -152,16 +152,15 @@ Only one active attempt is allowed for a user and interview. Completion requires
 - Zod validates authentication, interview, question, generation, and answer inputs.
 - Protected resources enforce ownership through the authenticated user ID.
 - Invalid or expired JWTs return `401 Unauthorized`, not `500 Internal Server Error`.
-- The frontend removes an expired access token and returns the user to login.
+- The frontend refreshes expired access tokens through the refresh-cookie endpoint and returns the user to login if refresh fails.
 
 ## Current Limitations
 
-- There is currently no refresh endpoint, so an expired 15-minute access token requires login again.
-- The frontend stores the access token in `localStorage`; an HttpOnly access-token flow would reduce XSS exposure for production.
+- Access tokens are held in frontend memory; the refresh token remains in an HttpOnly cookie. A full HttpOnly access-token flow could further reduce XSS exposure for production.
 - The frontend API base URL is currently `http://localhost:5000/api/v1` and is not yet environment-configurable.
 - Backend CORS is currently hard-coded for `http://localhost:3000`.
 - There is no pagination or filtering on list endpoints.
-- Previously submitted answers cannot currently be edited from the frontend because the backend answer `PATCH` endpoint evaluates an answer and ignores its request body.
+- Submitted answers are immutable from the frontend; the backend answer `PATCH` endpoint is reserved for evaluation.
 - Timed attempts and automatic submission are not currently implemented.
 - A dedicated forgot-password/reset-password flow is not implemented by the backend.
-- Automated test coverage is not yet configured in the application packages.
+- Backend DTO validation tests run with the package `test` script; broader integration coverage remains a follow-up.

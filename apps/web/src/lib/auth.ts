@@ -1,4 +1,4 @@
-import api from "./api";
+import api, { setAccessToken } from "./api";
 
 export type RegisterInput = {
   name: string;
@@ -28,9 +28,7 @@ export const login = async (data: LoginInput) => {
 
   const accessToken = response.data.data.accessToken;
 
-  if (accessToken) {
-    localStorage.setItem("accessToken", accessToken);
-  }
+  setAccessToken(accessToken ?? null);
 
   return response.data;
 };
@@ -40,9 +38,7 @@ export const logout = async () => {
     const response = await api.post("/auth/logout");
     return response.data;
   } finally {
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem("accessToken");
-    }
+    setAccessToken(null);
   }
 };
 

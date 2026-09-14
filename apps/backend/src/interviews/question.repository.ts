@@ -117,28 +117,29 @@ async createManyQuestions(
   interviewId: string,
   questions: CreateQuestionDto[]
 ) {
-  return prisma.$transaction(
-    questions.map((question) =>
-      prisma.interviewQuestion.create({
-        data: {
-          interviewId,
-          question: question.question,
-          type: question.type,
+    return prisma.$transaction(async (transaction) => {
+      await transaction.interviewQuestion.deleteMany({
+        where: { interviewId },
+      });
 
-          options:
-            question.options == null
-              ? Prisma.JsonNull
-              : question.options,
-
-          correctAnswer:
-            question.correctAnswer ?? null,
-
-          explanation:
-            question.explanation ?? null,
-        },
-      })
-    )
-  );
+      return Promise.all(
+        questions.map((question) =>
+          transaction.interviewQuestion.create({
+            data: {
+              interviewId,
+              question: question.question,
+              type: question.type,
+              options:
+                question.options == null
+                  ? Prisma.JsonNull
+                  : question.options,
+              correctAnswer: question.correctAnswer ?? null,
+              explanation: question.explanation ?? null,
+            },
+          })
+        )
+      );
+    });
 }
 }
 

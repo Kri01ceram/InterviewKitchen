@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { getApiErrorMessage } from "@/lib/api";
 import { getQuestions, type InterviewQuestion } from "@/lib/interviews";
 import { completeAttempt } from "@/lib/attempts";
-import { createAnswer, getAnswers, type Answer } from "@/lib/answers";
+import { createAnswer, evaluateAnswer, getAnswers, type Answer } from "@/lib/answers";
 import AppShell from "@/components/app-shell";
 
 type AnswerMap = Record<string, string>;
@@ -18,6 +18,7 @@ export default function AttemptPage() {
   const [questions, setQuestions] = useState<InterviewQuestion[]>([]);
   const [answers, setAnswers] = useState<AnswerMap>({});
   const [savedAnswerIds, setSavedAnswerIds] = useState<Record<string, string>>({});
+  const [answerRecords, setAnswerRecords] = useState<Record<string, Answer>>({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -32,6 +33,7 @@ export default function AttemptPage() {
         const savedAnswers = (answerResponse.data?.answers ?? []) as Answer[];
         setAnswers(Object.fromEntries(savedAnswers.map((item) => [item.questionId, item.answer])));
         setSavedAnswerIds(Object.fromEntries(savedAnswers.map((item) => [item.questionId, item.id])));
+        setAnswerRecords(Object.fromEntries(savedAnswers.map((item) => [item.questionId, item])));
       })
       .catch((requestError: unknown) => {
         if (!cancelled) setError(getApiErrorMessage(requestError, "Failed to load this attempt."));
@@ -69,8 +71,17 @@ export default function AttemptPage() {
     try {
       setSubmitting(true);
       setError("");
-      if (savedAnswerIds[currentQuestion.id]) return true;
-      await createAnswer(interviewId, attemptId, { questionId: currentQuestion.id, answer: currentAnswer.trim() });
+      let savedAnswer = answerRecords[currentQuestion.id];
+      if (!savedAnswer) {
+        const response = await createAnswer(interviewId, attemptId, { questionId: currentQuestion.id, answer: currentAnswer.trim() });
+        savedAnswer = response.data?.answer as Answer;
+        setSavedAnswerIds((previous) => ({ ...previous, [currentQuestion.id]: savedAnswer.id }));
+        setAnswerRecords((previous) => ({ ...previous, [currentQuestion.id]: savedAnswer }));
+      }
+      if (savedAnswer.score === null) {
+        savedAnswer = (await evaluateAnswer(interviewId, attemptId, savedAnswer.id)).data?.answer as Answer;
+        setAnswerRecords((previous) => ({ ...previous, [currentQuestion.id]: savedAnswer }));
+      }
       return true;
     } catch (requestError: unknown) {
       setError(getApiErrorMessage(requestError, "Failed to save this answer."));
@@ -94,6 +105,17 @@ export default function AttemptPage() {
     if (!(await submitCurrentAnswer())) return;
     try {
       setSubmitting(true);
+      for (const question of questions) {
+        const savedAnswer = answerRecords[question.id];
+
+        if (savedAnswer && savedAnswer.score === null) {
+          const response = await evaluateAnswer(interviewId, attemptId, savedAnswer.id);
+          setAnswerRecords((previous) => ({
+            ...previous,
+            [question.id]: response.data?.answer as Answer,
+          }));
+        }
+      }
       await completeAttempt(interviewId, attemptId);
       router.push(`/interviews/${interviewId}/attempt/${attemptId}/complete`);
     } catch (requestError: unknown) {

@@ -3,6 +3,7 @@ import { HTTP_STATUS } from "../shared/constants/http.js";
 import { interviewRepository } from "./interview.repository.js";
 import { attemptRepository } from "./attempt.repository.js";
 import { questionRepository } from "./question.repository.js";
+import { Prisma } from "@prisma/client";
 
 export class AttemptService {
   constructor(
@@ -48,18 +49,24 @@ export class AttemptService {
       );
     }
 
-    const attempt =
-      await this.repository.createAttempt(
+    try {
+      return await this.repository.createAttempt(
         interviewId,
         userId
       );
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        throw new AppError(
+          "An interview attempt is already in progress.",
+          HTTP_STATUS.CONFLICT
+        );
+      }
 
-    await this.interviews.updateInterviewStatus(
-      interviewId,
-      "IN_PROGRESS"
-    );
-
-    return attempt;
+      throw error;
+    }
   }
 
   async getAttempts(
@@ -154,6 +161,13 @@ if (answers.length < questions.length) {
     HTTP_STATUS.BAD_REQUEST
   );
 }
+
+        if (answers.some((answer) => answer.score === null)) {
+          throw new AppError(
+            "Cannot complete the attempt until all answers are evaluated.",
+            HTTP_STATUS.BAD_REQUEST
+          );
+        }
 
     const completedAttempt =
       await this.repository.completeAttempt(

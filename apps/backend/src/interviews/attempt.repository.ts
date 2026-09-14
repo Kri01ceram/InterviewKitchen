@@ -3,15 +3,20 @@ import { prisma } from "../lib/prisma.js";
 export class AttemptRepository {
   
   async createAttempt(
-    
     interviewId: string,
     userId: string
   ) {
-    return prisma.interviewAttempt.create({
-      data: {
-        interviewId,
-        userId,
-      },
+    return prisma.$transaction(async (transaction) => {
+      const attempt = await transaction.interviewAttempt.create({
+        data: { interviewId, userId },
+      });
+
+      await transaction.interview.update({
+        where: { id: interviewId },
+        data: { status: "IN_PROGRESS" },
+      });
+
+      return attempt;
     });
   }
 
