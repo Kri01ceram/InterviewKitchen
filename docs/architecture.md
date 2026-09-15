@@ -156,11 +156,6 @@ Only one active attempt is allowed for a user and interview. Completion requires
 
 ## Current Limitations
 
-- Access tokens are held in frontend memory; the refresh token remains in an HttpOnly cookie. A full HttpOnly access-token flow could further reduce XSS exposure for production.
-- The frontend API base URL is currently `http://localhost:5000/api/v1` and is not yet environment-configurable.
-- Backend CORS is currently hard-coded for `http://localhost:3000`.
-- There is no pagination or filtering on list endpoints.
-- Submitted answers are immutable from the frontend; the backend answer `PATCH` endpoint is reserved for evaluation.
-- Timed attempts and automatic submission are not currently implemented.
+ The workspace packages are active: `packages/config` owns backend environment loading, `packages/eslint-config` owns shared frontend lint ignores, `packages/types` owns shared interview domain types, and `packages/ui` provides shared React UI primitives.
 - A dedicated forgot-password/reset-password flow is not implemented by the backend.
 - Backend DTO validation tests run with the package `test` script; broader integration coverage remains a follow-up.

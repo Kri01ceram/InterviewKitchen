@@ -1,0 +1,11 @@
+{
+  "name": "@interview-kitchen/eslint-config",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./index.mjs" },
+  "dependencies": {
+    "eslint-config-next": "16.2.11",
+    "next": "16.2.11"
+  }
+}

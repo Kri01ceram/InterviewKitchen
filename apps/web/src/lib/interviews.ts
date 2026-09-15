@@ -1,25 +1,12 @@
 import api from "./api";
+import type {
+  Difficulty,
+  InterviewStatus,
+  InterviewType,
+  QuestionType,
+} from "@interview-kitchen/types";
 
-export type InterviewType =
-  | "TECHNICAL"
-  | "HR"
-  | "MIXED";
-
-export type QuestionType =
-  | "MCQ"
-  | "CODING"
-  | "SUBJECTIVE"
-  | "MIXED";
-
-export type Difficulty =
-  | "EASY"
-  | "MEDIUM"
-  | "HARD";
-
-export type InterviewStatus =
-  | "CREATED"
-  | "IN_PROGRESS"
-  | "COMPLETED";
+export type { Difficulty, InterviewStatus, InterviewType, QuestionType } from "@interview-kitchen/types";
 
 export type CreateInterviewInput = {
   title: string;

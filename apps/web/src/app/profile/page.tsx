@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import AppShell from "@/components/app-shell";
 import { changePassword, getProfile, updateProfile, type Profile } from "@/lib/users";
 import { getApiErrorMessage } from "@/lib/api";
+import { Panel } from "@interview-kitchen/ui";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -34,5 +35,5 @@ export default function ProfilePage() {
   };
 
   if (loading) return <AppShell><main className="page-frame"><p className="muted">Loading profile...</p></main></AppShell>;
-  return <AppShell><main className="page-frame"><div className="content-column narrow-column"><p className="eyebrow">Account</p><h1 className="page-title">Your profile</h1>{error && <div className="error-banner" role="alert">{error}</div>}{message && <div className="success-banner" role="status">{message}</div>}<form className="panel form-stack" onSubmit={saveProfile}><h2>Profile details</h2><label>Name<input value={name} onChange={(event) => setName(event.target.value)} maxLength={100} required /></label><label>Email<input value={profile?.email ?? ""} disabled /></label><button className="button button-primary">Save profile</button></form><form className="panel form-stack" onSubmit={savePassword}><h2>Change password</h2><label>Current password<input type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} required /></label><label>New password<input type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} minLength={8} required /></label><button className="button button-secondary">Change password</button></form></div></main></AppShell>;
+  return <AppShell><main className="page-frame"><div className="content-column narrow-column"><p className="eyebrow">Account</p><h1 className="page-title">Your profile</h1>{error && <div className="error-banner" role="alert">{error}</div>}{message && <div className="success-banner" role="status">{message}</div>}<Panel><form className="form-stack" onSubmit={saveProfile}><h2>Profile details</h2><label>Name<input value={name} onChange={(event) => setName(event.target.value)} maxLength={100} required /></label><label>Email<input value={profile?.email ?? ""} disabled /></label><button className="button button-primary">Save profile</button></form></Panel><Panel><form className="form-stack" onSubmit={savePassword}><h2>Change password</h2><label>Current password<input type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} required /></label><label>New password<input type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} minLength={8} required /></label><button className="button button-secondary">Change password</button></form></Panel></div></main></AppShell>;
 }
