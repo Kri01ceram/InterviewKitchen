@@ -10,6 +10,9 @@
     "lint:web": "npm run lint --workspace web",
     "test:backend": "npm test --workspace @interview-kitchen/backend"
   },
+  "optionalDependencies": {
+    "lightningcss-linux-x64-gnu": "1.32.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Kri01ceram/InterviewKitchen.git"
