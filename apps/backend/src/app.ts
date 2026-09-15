@@ -8,9 +8,8 @@ import errorHandler from "./middleware/error-handler.js";
 import { API_BASE } from "./config/constants.js";
 import routes from "./routes/index.js";
 import cookieParser from "cookie-parser";
-import { AUTH_CONSTANTS } from "./shared/constants/auth.js";
+
 import { env } from "./config/env.js";
-import { HTTP_STATUS } from "./shared/constants/http.js";
 import userRoutes from "./users/user.routes.js";
 
 const app = express();
